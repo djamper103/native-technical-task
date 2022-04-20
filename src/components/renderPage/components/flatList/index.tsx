@@ -10,7 +10,7 @@ interface HomePageListProps {
   currentPage: number;
   allPageCurrent: number;
   navigation?: any;
-  onPressItem: (value: MovieData) => void;
+  type: string;
   onSearch: (value: string) => void;
   prevPage: () => void;
   nextPage: () => void;
@@ -22,22 +22,22 @@ export const HomePageList: FC<HomePageListProps> = ({
   currentPage,
   allPageCurrent,
   navigation,
-  onPressItem,
+  type,
   onSearch,
   prevPage,
   nextPage,
   installationCurrentPage,
 }) => {
   const renderItem: any = ({item}: {item: MovieData}) => {
-    return (
-      <ListItem data={item} onPressItem={onPressItem} navigation={navigation} />
-    );
+    return <ListItem data={item} navigation={navigation} type={type} />;
   };
   return (
     <FlatList<MovieData>
       data={state}
       bounces={false}
-      keyExtractor={item => item.original_title + item.release_date}
+      keyExtractor={item =>
+        type === 'movie' ? item.title : item.name + item.release_date
+      }
       renderItem={renderItem}
       showsVerticalScrollIndicator={false}
       numColumns={2}

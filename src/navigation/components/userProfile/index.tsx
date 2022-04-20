@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC} from 'react';
 import {
   Image,
   ImageSourcePropType,
@@ -13,33 +13,36 @@ import {
   DEFAULT_PERSON_ICON,
   LIGHT_THEME_ICON,
 } from '../../../constants/images';
+import {useAppDispatch, useAppSelector} from '../../../hooks/redux';
+import {setTheme} from '../../../redux/store/reducers/actionCreator';
 import {dh, dw} from '../../../utils/dimensions';
 
 interface UserProfileProps {
   userIcon?: ImageSourcePropType;
-  isDarkTheme?: boolean;
+
   userName?: string;
   navigation?: any;
-  onPressTheme: () => void;
 }
 
 export const UserProfile: FC<UserProfileProps> = ({
   userIcon,
-  // isDarkTheme = false,
   userName,
   navigation,
-  onPressTheme,
 }) => {
-  const [isDarkTheme, setIsDarkTheme] = useState(false);
+  const {isTheme} = useAppSelector(reducer => reducer.themeReducer);
+
+  const dispatch = useAppDispatch();
+
   const onPressPhoto = () => {
-    navigation.navigate('ProfilePage');
+    navigation.navigate('Profile Page');
   };
-  const pressTheme = () => {
-    onPressTheme();
-    setIsDarkTheme(!isDarkTheme);
+
+  const onPressTheme = () => {
+    dispatch(setTheme());
   };
+
   return (
-    <View style={[styles.container, isDarkTheme && styles.containerDark]}>
+    <View style={[styles.container, isTheme && styles.containerDark]}>
       <View style={styles.containerHeader}>
         <TouchableOpacity onPress={onPressPhoto}>
           <Image
@@ -47,9 +50,9 @@ export const UserProfile: FC<UserProfileProps> = ({
             style={styles.image}
           />
         </TouchableOpacity>
-        <TouchableOpacity onPress={pressTheme}>
+        <TouchableOpacity onPress={onPressTheme}>
           <Image
-            source={isDarkTheme ? DARK_THEME_ICON : LIGHT_THEME_ICON}
+            source={isTheme ? DARK_THEME_ICON : LIGHT_THEME_ICON}
             style={styles.image}
           />
         </TouchableOpacity>
@@ -64,7 +67,7 @@ export const UserProfile: FC<UserProfileProps> = ({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: COLORS.STEEL_BLUE,
-    margin: 0,
+    top: dh(-5),
     padding: dw(20),
   },
   containerDark: {

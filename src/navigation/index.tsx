@@ -4,10 +4,13 @@ import {routes} from './routes';
 import {Image, StyleSheet} from 'react-native';
 import {CustomDrawer} from './components/customDrawer/index';
 import {COLORS} from '../constants/colors';
+import {useAppSelector} from '../hooks/redux';
 
 const Drawer = createDrawerNavigator();
 
 export const Tabs: FC = () => {
+  const {isTheme} = useAppSelector(reducer => reducer.themeReducer);
+
   return (
     <Drawer.Navigator
       drawerContent={props => <CustomDrawer {...props} />}
@@ -24,8 +27,9 @@ export const Tabs: FC = () => {
         },
         headerTitleAlign: 'center',
         headerStyle: {
-          backgroundColor: '#4579BF',
+          backgroundColor: isTheme ? COLORS.CLOUD_BURST : COLORS.STEEL_BLUE,
         },
+        headerTintColor: COLORS.WHITE,
       }}>
       {routes.map(route => (
         <Drawer.Screen
@@ -47,7 +51,7 @@ const styles = StyleSheet.create({
   image: {
     resizeMode: 'contain',
     backgroundColor: COLORS.TRANSPARENT,
-    tintColor: '#b1c5e2',
+    tintColor: COLORS.PERIWINKLE_GRAY,
   },
 });
 

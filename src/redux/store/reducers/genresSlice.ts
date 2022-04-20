@@ -1,8 +1,9 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {GenresType} from '../../../types/genres';
 import {fetchGenres} from './actionCreator';
 
 interface GenresState {
-  genres: Object[];
+  genres: GenresType[];
   currentGenre: string;
   error: string;
 }
@@ -22,12 +23,9 @@ export const GenresSlice = createSlice({
     },
   },
   extraReducers: {
-    [fetchGenres.fulfilled.type]: (
-      state: any,
-      action: PayloadAction<Object[]>,
-    ) => {
+    [fetchGenres.fulfilled.type]: (state: any, action: any) => {
       state.error = '';
-      state.genres = action.payload;
+      state.genres = action.payload.genres;
     },
     [fetchGenres.pending.type]: (_state: any) => {},
     [fetchGenres.rejected.type]: (

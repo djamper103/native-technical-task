@@ -8,4 +8,6 @@ export const COLORS = {
   DUNE: '#252320',
   GHOST: '#C6C9CF',
   ALUMINIUM: '#A9ACB7',
+  ATHENS_GRAY: '#EBEBF2',
+  PERIWINKLE_GRAY: '#B1C5E2',
 };

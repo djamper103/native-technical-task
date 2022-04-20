@@ -31,10 +31,12 @@ export const Pagination: FC<PaginationProps> = ({
   const ref = useRef<FlatList>(null);
   useEffect(() => {
     const count = [];
-    for (let i = 1; i <= allPages; i++) {
-      count.push({page: i, name: `name${i}`});
+    if (allPages > 0) {
+      for (let i = 1; i <= allPages; i++) {
+        count.push({page: i, name: `name${i}`});
+      }
+      setErrayCount(count);
     }
-    setErrayCount(count);
   }, [errayCount.length, allPages]);
 
   useEffect(() => {
@@ -49,14 +51,16 @@ export const Pagination: FC<PaginationProps> = ({
   }, [page]);
 
   const scrollToIndexFailed = () => {
-    setTimeout(() => {
-      ref.current?.scrollToIndex({
-        animated: true,
-        index: page - 1,
-        viewOffset: 10,
-        viewPosition: 1,
-      });
-    }, 100);
+    if (allPages > 0) {
+      setTimeout(() => {
+        ref.current?.scrollToIndex({
+          animated: true,
+          index: page - 1,
+          viewOffset: 10,
+          viewPosition: 1,
+        });
+      }, 100);
+    }
   };
 
   const renderItem: any = (item: any) => {
@@ -83,15 +87,17 @@ export const Pagination: FC<PaginationProps> = ({
       <TouchableOpacity style={styles.containerButton} onPress={onLeftPress}>
         <Image source={ARROW_LEFT_ICON} style={styles.image} />
       </TouchableOpacity>
-      <FlatList<Count>
-        ref={ref}
-        data={errayCount && errayCount}
-        keyExtractor={item => item.name}
-        renderItem={renderItem}
-        onScrollToIndexFailed={scrollToIndexFailed.bind(this)}
-        horizontal={true}
-        showsHorizontalScrollIndicator={false}
-      />
+      {errayCount.length > 1 && (
+        <FlatList<Count>
+          ref={ref}
+          data={errayCount}
+          keyExtractor={item => item.name}
+          renderItem={renderItem}
+          onScrollToIndexFailed={scrollToIndexFailed.bind(this)}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+        />
+      )}
       <TouchableOpacity style={styles.containerButton} onPress={onRightPress}>
         <Image source={ARROW_RIGHT_ICON} style={styles.image} />
       </TouchableOpacity>

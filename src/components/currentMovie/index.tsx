@@ -1,42 +1,52 @@
-import axios from 'axios';
 import React, {FC, useEffect, useState} from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
-import {appKey, imagePath} from '../../constants/common';
+import {imagePath} from '../../constants/common';
+import {useAppDispatch, useAppSelector} from '../../hooks/redux';
+import {
+  fetchMoreDetails,
+  fetchVideo,
+} from '../../redux/store/reducers/actionCreator';
 import {MovieData} from '../../types/movieData';
 
-export const CurrentMovie: FC = props => {
-  const [state] = useState<MovieData>(props.route.params);
-  const [creditsData, setCreditsData] = useState();
-  const [type] = useState('movie');
+export const CurrentMovie: FC = (props: any) => {
+  const [state, setState] = useState<MovieData>();
+  const [cast, setCast] = useState();
+  const [type, setType] = useState<string>('');
+  // const [videoUrl1, setVideoUrl1] = useState('');
 
-  const fetchCredits = async () => {
-    //more detail
-    const {data} = await axios.get(
-      // `https://api.themoviedb.org/3/${type}/${state.id}?api_key=${appKey}&language=en-US`,
-      `https://api.themoviedb.org/3/${type}/${state.id}/credits?api_key=${appKey}&language=en-US`,
-    );
-    setCreditsData(data);
+  const {videoUrl} = useAppSelector(reducer => reducer.videoReducer);
 
-    //Video url
-    // const {data} = await axios.get(
-    //   `https://api.themoviedb.org/3/${type}/${state.id}/videos?api_key=${appKey}&language=en-US`,
-    // );
-    // let videoUrl = data.results.filter(
-    //   (el: any) => el.name === 'Official Trailer',
-    // );
-    // console.log('///', videoUrl[0].key);
-    // `https://www.youtube.com/watch?v=${videoUrl[0].key}`;
-  };
+  const dispatch = useAppDispatch();
+
+  // console.log('///', videoUrl[0].key);
+  // `https://www.youtube.com/watch?v=${videoUrl[0].key}`;
+  // };
 
   useEffect(() => {
-    fetchCredits();
-  }, []);
+    setState(props.route.params.data);
+    setType(props.route.params.type);
+    dispatch(
+      fetchVideo({
+        type: props.route.params.type,
+        id: props.route.params.data.id,
+      }),
+    );
+    // setVideoUrl1(videoUrl)
+    dispatch(
+      fetchMoreDetails({
+        type: props.route.params.type,
+        id: props.route.params.data.id,
+      }),
+    ).then((el: any) => {
+      setCast(el.payload.cast);
+    });
+  }, [dispatch, props.route.params.data, props.route.params.type]);
 
   return (
     <View style={styles.container}>
       {state && (
         <View>
-          <Text>{state.original_title}</Text>
+          <Text> {type === 'movie' ? state.title : state.name}</Text>
           <Image
             style={styles.image}
             source={{
@@ -45,6 +55,7 @@ export const CurrentMovie: FC = props => {
                 : 'https://reactnative.dev/img/tiny_logo.png',
             }}
           />
+          <Text> {state.overview}</Text>
         </View>
       )}
     </View>
