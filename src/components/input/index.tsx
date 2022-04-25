@@ -17,6 +17,7 @@ interface InputProps {
   rightIcon?: ImageSourcePropType;
   placeholder?: string;
   placeholderTextColor?: string;
+  isTheme?: boolean;
   inputStyle?: ViewStyle;
   containerStyle?: ViewStyle;
   containerLeftIcon?: ViewStyle;
@@ -32,6 +33,7 @@ export const Input: FC<InputProps> = ({
   rightIcon,
   placeholder = 'Search',
   placeholderTextColor = COLORS.BLACK,
+  isTheme,
   inputStyle,
   containerStyle,
   containerLeftIcon,
@@ -41,7 +43,12 @@ export const Input: FC<InputProps> = ({
   onPressRightIcon,
 }) => {
   return (
-    <View style={[styles.container, containerStyle]}>
+    <View
+      style={[
+        styles.container,
+        isTheme && styles.containerActive,
+        containerStyle,
+      ]}>
       {leftIcon && (
         <TouchableOpacity
           style={containerLeftIcon && containerLeftIcon}
@@ -75,6 +82,10 @@ const styles = StyleSheet.create({
     borderColor: COLORS.BLACK,
     margin: dw(20),
     paddingHorizontal: dw(10),
+    backgroundColor: COLORS.WHITE,
+  },
+  containerActive: {
+    borderColor: COLORS.WHITE,
   },
   input: {
     height: dw(50),

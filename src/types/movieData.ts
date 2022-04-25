@@ -5,6 +5,7 @@ export interface MovieData {
   first_air_date?: string;
   release_date: string;
   poster_path: string;
+  backdrop_path: string;
   original_language: string;
   overview: string;
   vote_average: string;

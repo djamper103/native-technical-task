@@ -1,6 +1,7 @@
 import React, {FC, useState} from 'react';
 import {StyleSheet} from 'react-native';
 import {SEARCH_ICON} from '../../constants/images';
+import {useAppSelector} from '../../hooks/redux';
 import {Input} from '../input';
 
 interface SearchProps {
@@ -8,6 +9,7 @@ interface SearchProps {
 }
 
 export const Search: FC<SearchProps> = ({onSearch}) => {
+  const {isTheme} = useAppSelector(reducer => reducer.themeReducer);
   const [text, onChangeText] = useState('');
 
   const searchItem = () => {
@@ -19,9 +21,10 @@ export const Search: FC<SearchProps> = ({onSearch}) => {
       placeholder="Search"
       text={text}
       rightIcon={SEARCH_ICON}
+      containerStyle={styles.container}
+      isTheme={isTheme}
       onChangeText={onChangeText}
       onPressRightIcon={searchItem}
-      containerStyle={styles.container}
     />
   );
 };

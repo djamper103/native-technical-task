@@ -32,5 +32,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     margin: dw(50),
+    // backgroundColor: COLORS.OXFORD_BLUE,
   },
 });

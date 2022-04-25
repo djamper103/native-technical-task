@@ -6,6 +6,8 @@ import {RenderPage} from '../../renderPage';
 export const CategoriesRenderPage: FC = (props: any) => {
   const {moviesState} = useAppSelector(reducer => reducer.moviesReducer);
   const {allPages} = useAppSelector(reducer => reducer.moviesReducer);
+  const {error} = useAppSelector(reducer => reducer.moviesReducer);
+  const {isLoading} = useAppSelector(reducer => reducer.moviesReducer);
   return (
     <RenderPage
       navigation={props.navigation}
@@ -14,6 +16,8 @@ export const CategoriesRenderPage: FC = (props: any) => {
       renderAllPage={allPages}
       currentFetch={fetchMovies}
       genreType={props.route.params.genreType}
+      currentError={error}
+      currentIsLoading={isLoading}
     />
   );
 };

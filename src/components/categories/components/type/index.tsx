@@ -23,7 +23,7 @@ export const TypeGenres: FC<TypeGenresProps> = ({placeHolder, onPress}) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: COLORS.CLOUD_BURST,
+    backgroundColor: COLORS.OXFORD_BLUE,
   },
   text: {
     color: COLORS.WHITE,

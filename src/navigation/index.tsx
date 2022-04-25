@@ -17,7 +17,10 @@ export const Tabs: FC = () => {
       screenOptions={{
         drawerActiveBackgroundColor: COLORS.MAROON_FLUSH,
         drawerActiveTintColor: COLORS.WHITE,
-        drawerInactiveTintColor: COLORS.BLACK,
+        drawerInactiveTintColor: isTheme ? COLORS.WHITE : COLORS.BLACK,
+        drawerStyle: {
+          backgroundColor: isTheme ? COLORS.OXFORD_BLUE : COLORS.WHITE,
+        },
         drawerLabelStyle: {
           fontSize: 16,
         },

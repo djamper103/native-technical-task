@@ -9,6 +9,9 @@ import {
   setSearchText,
 } from '../../redux/store/reducers/actionCreator';
 import {MovieData} from '../../types/movieData';
+import {View, ActivityIndicator, StyleSheet} from 'react-native';
+import {COLORS} from '../../constants/colors';
+import {dh, dw} from '../../utils/dimensions';
 
 interface RenderPageProps {
   navigation?: any;
@@ -17,6 +20,8 @@ interface RenderPageProps {
   renderAllPage: number;
   currentFetch: any;
   genreType?: string;
+  currentError: any;
+  currentIsLoading: any;
 }
 
 export const RenderPage: FC<RenderPageProps> = ({
@@ -26,15 +31,33 @@ export const RenderPage: FC<RenderPageProps> = ({
   renderAllPage,
   currentFetch,
   genreType,
+  currentError,
+  currentIsLoading,
 }) => {
   const [state, setState] = useState<MovieData[]>([]);
   const [allPageCurrent, setAllPageCurrent] = useState(0);
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState<boolean>();
 
   const dispatch = useAppDispatch();
 
   const {currentPage} = useAppSelector(reducer => reducer.pagesReducer);
 
   const {searchText} = useAppSelector(reducer => reducer.searchReducer);
+  const {searchError} = useAppSelector(reducer => reducer.searchReducer);
+  const {searchIsLoading} = useAppSelector(reducer => reducer.searchReducer);
+
+  const {isTheme} = useAppSelector(reducer => reducer.themeReducer);
+
+  useEffect(() => {
+    setError('Enter valid text to search');
+    setIsLoading(searchIsLoading);
+  }, [searchError, searchIsLoading]);
+
+  useEffect(() => {
+    setError(currentError);
+    setIsLoading(currentIsLoading);
+  }, [currentError, currentIsLoading]);
 
   useEffect(() => {
     if (state?.length === 0) {
@@ -167,16 +190,49 @@ export const RenderPage: FC<RenderPageProps> = ({
   };
 
   return (
-    <HomePageList
-      state={state && state}
-      navigation={navigation}
-      currentPage={currentPage}
-      allPageCurrent={allPageCurrent}
-      type={type}
-      onSearch={onSearch}
-      nextPage={nextPage}
-      prevPage={prevPage}
-      installationCurrentPage={installationCurrentPage}
-    />
+    <View style={[styles.container, isTheme && styles.containerActive]}>
+      {error ? (
+        <HomePageList
+          state={state && state}
+          navigation={navigation}
+          currentPage={currentPage}
+          allPageCurrent={allPageCurrent}
+          type={type}
+          onSearch={onSearch}
+          nextPage={nextPage}
+          prevPage={prevPage}
+          installationCurrentPage={installationCurrentPage}
+          error={error}
+        />
+      ) : isLoading ? (
+        <View style={styles.containerLoader}>
+          <ActivityIndicator size={dw(150)} color={COLORS.STEEL_BLUE} />
+        </View>
+      ) : (
+        <HomePageList
+          state={state && state}
+          navigation={navigation}
+          currentPage={currentPage}
+          allPageCurrent={allPageCurrent}
+          type={type}
+          onSearch={onSearch}
+          nextPage={nextPage}
+          prevPage={prevPage}
+          installationCurrentPage={installationCurrentPage}
+        />
+      )}
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: COLORS.WHITE,
+  },
+  containerActive: {
+    backgroundColor: COLORS.OXFORD_BLUE,
+  },
+  containerLoader: {
+    marginTop: dh(150),
+  },
+});

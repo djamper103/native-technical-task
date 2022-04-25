@@ -7,6 +7,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {Provider} from 'react-redux';
 import {setupStore} from './redux/store/store';
 import {routesStack} from './navigation/routes';
+import {COLORS} from './constants/colors';
 
 LogBox.ignoreLogs([
   "[react-native-gesture-handler] Seems like you're using an old API with gesture components, check out new Gestures system!",
@@ -32,6 +33,17 @@ const App = () => {
               name={el.name}
               component={el.component}
               key={el.name}
+              options={{
+                headerTitleStyle: {
+                  fontSize: 24,
+                  color: COLORS.WHITE,
+                },
+                headerTitleAlign: 'center',
+                headerStyle: {
+                  backgroundColor: COLORS.CLOUD_BURST,
+                },
+                headerTintColor: COLORS.WHITE,
+              }}
             />
           ))}
         </Stack.Navigator>

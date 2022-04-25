@@ -1,5 +1,6 @@
 import React, {FC} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
+import {COLORS} from '../../constants/colors';
 
 interface FavoritePageProps {}
 
@@ -15,5 +16,6 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: COLORS.OXFORD_BLUE,
   },
 });

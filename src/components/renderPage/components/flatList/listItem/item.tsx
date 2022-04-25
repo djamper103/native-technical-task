@@ -4,6 +4,7 @@ import {MovieData} from '../../../../../types/movieData';
 import {dh, dw} from '../../../../../utils/dimensions';
 import {imagePath} from '../../../../../constants/common';
 import {COLORS} from '../../../../../constants/colors';
+import {VoteContainer} from '../../../../common/vote';
 
 interface ListItemProps {
   data: MovieData;
@@ -32,9 +33,10 @@ export const ListItem: FC<ListItemProps> = ({data, navigation, type}) => {
                   : 'https://reactnative.dev/img/tiny_logo.png',
               }}
             />
-            <View style={styles.containerRating}>
-              <Text style={styles.text}>{data.vote_average}</Text>
-            </View>
+            <VoteContainer
+              vote={data.vote_average}
+              containerStyle={styles.containerRating}
+            />
           </View>
           <View style={styles.containerMainText}>
             <View style={styles.containerTitle}>
@@ -62,33 +64,33 @@ const styles = StyleSheet.create({
   },
   containerMain: {
     backgroundColor: COLORS.CLOUD_BURST,
-    paddingVertical: dw(10),
     borderRadius: dw(14),
-    // justifyContent: 'center',
-    // alignItems: 'center',
   },
   containerRating: {
-    alignItems: 'flex-end',
     bottom: dh(298),
-    right: dw(5),
+    left: dw(145),
   },
   containerMainText: {
     marginHorizontal: dw(10),
   },
   containerTitle: {
-    height: dh(70),
+    height: dh(85),
+    bottom: dw(10),
   },
   containerDate: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginBottom: dw(15),
   },
   image: {
     width: dw(190),
     height: dh(300),
+    borderRadius: dw(14),
   },
   text: {
     color: COLORS.WHITE,
-    fontSize: 16,
+    fontSize: 18,
+    textAlign: 'center',
   },
   textDate: {
     color: COLORS.ATHENS_GRAY,

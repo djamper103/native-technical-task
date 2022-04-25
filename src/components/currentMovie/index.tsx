@@ -1,23 +1,27 @@
 import React, {FC, useEffect, useState} from 'react';
-import {Image, StyleSheet, Text, View} from 'react-native';
-import {imagePath} from '../../constants/common';
+import {FlatList, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {COLORS} from '../../constants/colors';
 import {useAppDispatch, useAppSelector} from '../../hooks/redux';
 import {
   fetchMoreDetails,
   fetchVideo,
 } from '../../redux/store/reducers/actionCreator';
+import {CastItemType, CastPhotoType} from '../../types/cast';
 import {MovieData} from '../../types/movieData';
+import {dh, dw} from '../../utils/dimensions';
+import {CastPhoto} from './components/castPhoto';
+import {CurrentMovieHeader} from './components/header';
 
 export const CurrentMovie: FC = (props: any) => {
   const [state, setState] = useState<MovieData>();
-  const [cast, setCast] = useState();
+  const [cast, setCast] = useState<CastPhotoType[]>([]);
   const [type, setType] = useState<string>('');
-  // const [videoUrl1, setVideoUrl1] = useState('');
 
-  const {videoUrl} = useAppSelector(reducer => reducer.videoReducer);
+  const {isTheme} = useAppSelector(reducer => reducer.themeReducer);
 
   const dispatch = useAppDispatch();
 
+  // const {videoUrl} = useAppSelector(reducer => reducer.videoReducer);
   // console.log('///', videoUrl[0].key);
   // `https://www.youtube.com/watch?v=${videoUrl[0].key}`;
   // };
@@ -31,7 +35,6 @@ export const CurrentMovie: FC = (props: any) => {
         id: props.route.params.data.id,
       }),
     );
-    // setVideoUrl1(videoUrl)
     dispatch(
       fetchMoreDetails({
         type: props.route.params.type,
@@ -42,33 +45,69 @@ export const CurrentMovie: FC = (props: any) => {
     });
   }, [dispatch, props.route.params.data, props.route.params.type]);
 
+  const renderItem: any = (item: CastItemType) => {
+    return <CastPhoto data={item.item} isTheme={isTheme} />;
+  };
+
   return (
-    <View style={styles.container}>
-      {state && (
+    <ScrollView style={[styles.container, isTheme && styles.containerActive]}>
+      {state ? (
         <View>
-          <Text> {type === 'movie' ? state.title : state.name}</Text>
-          <Image
-            style={styles.image}
-            source={{
-              uri: state
-                ? `${imagePath}${state.poster_path}`
-                : 'https://reactnative.dev/img/tiny_logo.png',
-            }}
-          />
-          <Text> {state.overview}</Text>
+          <CurrentMovieHeader state={state} type={type} isTheme={isTheme} />
+          {cast.length > 2 && (
+            <View>
+              <FlatList<CastPhotoType>
+                data={cast}
+                keyExtractor={item => item.profile_path + item.name}
+                renderItem={renderItem}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+              />
+            </View>
+          )}
+          <View style={styles.containerOverview}>
+            <Text style={[styles.text, isTheme && styles.textActive]}>
+              {' '}
+              {state.overview}
+            </Text>
+          </View>
+        </View>
+      ) : (
+        <View style={styles.containerText}>
+          <Text style={[styles.text, isTheme && styles.textActive]}>
+            Data is not available
+          </Text>
         </View>
       )}
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
+    backgroundColor: COLORS.WHITE,
+  },
+  containerActive: {
+    backgroundColor: COLORS.OXFORD_BLUE,
+  },
+  containerText: {
     alignItems: 'center',
+    marginTop: dh(150),
+  },
+  containerOverview: {
+    marginHorizontal: dw(10),
+    marginBottom: dw(10),
   },
   image: {
     width: 100,
     height: 100,
+  },
+  text: {
+    fontSize: 24,
+    color: COLORS.BLACK,
+    textAlign: 'justify',
+  },
+  textActive: {
+    color: COLORS.WHITE,
   },
 });

@@ -1,6 +1,7 @@
 import React, {FC} from 'react';
 import {StyleSheet, Text} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {COLORS} from '../../../../constants/colors';
 import {GenresType} from '../../../../types/genres';
 
 interface ListEllementProps {
@@ -24,5 +25,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flexWrap: 'wrap',
+    backgroundColor: COLORS.OXFORD_BLUE,
   },
 });

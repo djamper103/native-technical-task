@@ -11,6 +11,7 @@ interface LoginMenuProps {
 
 export const LoginMenu: FC<LoginMenuProps> = ({navigation}) => {
   const {signIn} = useAppSelector(reducer => reducer.loginReducer);
+  const {isTheme} = useAppSelector(reducer => reducer.themeReducer);
 
   const onPress = () => {
     navigation.navigate('Login');
@@ -23,7 +24,9 @@ export const LoginMenu: FC<LoginMenuProps> = ({navigation}) => {
           source={signIn ? SIGN_OUT_ICON : SIGN_IN_ICON}
           style={styles.image}
         />
-        <Text style={styles.text}>{signIn ? 'Sign out' : 'Sign in'}</Text>
+        <Text style={[styles.text, isTheme && styles.textActive]}>
+          {signIn ? 'Sign out' : 'Sign in'}
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -44,6 +47,9 @@ const styles = StyleSheet.create({
     color: COLORS.BLACK,
     fontSize: 16,
     fontWeight: '500',
+  },
+  textActive: {
+    color: COLORS.WHITE,
   },
   image: {
     resizeMode: 'contain',

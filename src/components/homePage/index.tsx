@@ -10,6 +10,8 @@ interface HomePageProps {
 export const HomePage: FC<HomePageProps> = ({navigation}) => {
   const {trendingState} = useAppSelector(reducer => reducer.trendingReducer);
   const {allTrendingPage} = useAppSelector(reducer => reducer.trendingReducer);
+  const {error} = useAppSelector(reducer => reducer.trendingReducer);
+  const {isLoading} = useAppSelector(reducer => reducer.trendingReducer);
   return (
     <RenderPage
       navigation={navigation}
@@ -17,6 +19,8 @@ export const HomePage: FC<HomePageProps> = ({navigation}) => {
       renderState={trendingState}
       renderAllPage={allTrendingPage}
       currentFetch={fetchTrending}
+      currentError={error}
+      currentIsLoading={isLoading}
     />
   );
 };

@@ -6,16 +6,16 @@ interface SearchState {
   searchState: MovieData[];
   searchText: string;
   searchAllPages: number;
-  isLoading: boolean;
-  error: string;
+  searchIsLoading: boolean;
+  searchError: string;
 }
 
 const initialState: SearchState = {
   searchState: [],
   searchText: '',
   searchAllPages: 0,
-  isLoading: false,
-  error: '',
+  searchIsLoading: false,
+  searchError: '',
 };
 
 export const SearchSlice = createSlice({
@@ -31,17 +31,17 @@ export const SearchSlice = createSlice({
   },
   extraReducers: {
     [fetchSearch.fulfilled.type]: (state, action) => {
-      state.isLoading = false;
-      state.error = '';
+      state.searchIsLoading = false;
+      state.searchError = '';
       state.searchState = action.payload.results;
       state.searchAllPages = action.payload.total_pages;
     },
     [fetchSearch.pending.type]: state => {
-      state.isLoading = true;
+      state.searchIsLoading = true;
     },
     [fetchSearch.rejected.type]: (state, action: PayloadAction<string>) => {
-      state.isLoading = false;
-      state.error = action.payload;
+      state.searchIsLoading = false;
+      state.searchError = action.payload;
     },
   },
 });
