@@ -28,7 +28,12 @@ export const CastPhoto: FC<CastPhotoProps> = ({data, isTheme}) => {
         <Text style={[styles.text, isTheme && styles.textActive]}>
           {data.name}
         </Text>
-        <Text style={[styles.text, styles.textCharacter]}>
+        <Text
+          style={[
+            styles.text,
+            styles.textCharacter,
+            data.character.length > 25 && styles.textLong,
+          ]}>
           {data.character}
         </Text>
       </View>
@@ -38,7 +43,7 @@ export const CastPhoto: FC<CastPhotoProps> = ({data, isTheme}) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: dw(315),
+    height: dw(285),
     width: dw(150),
   },
   image: {
@@ -54,6 +59,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: COLORS.BLACK,
     fontSize: 16,
+  },
+  textLong: {
+    fontSize: 13,
   },
   textCharacter: {
     color: COLORS.ALUMINIUM,

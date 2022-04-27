@@ -5,21 +5,40 @@ import {dh, dw} from '../../../../../utils/dimensions';
 import {imagePath} from '../../../../../constants/common';
 import {COLORS} from '../../../../../constants/colors';
 import {VoteContainer} from '../../../../common/vote';
+import {FavoriteIcon} from '../../../../common/favorite';
 
 interface ListItemProps {
   data: MovieData;
   navigation?: any;
   type: string;
+  checkFavorite: (value: MovieData) => void;
 }
 
-export const ListItem: FC<ListItemProps> = ({data, navigation, type}) => {
+export const ListItem: FC<ListItemProps> = ({
+  data,
+  navigation,
+  type,
+  checkFavorite,
+}) => {
   const [mediaType, setMediaType] = useState('');
+  const [isFavorite, setIsFavorite] = useState<any>(false);
+  const [title, setTitle] = useState<any>('Title');
+
   const onPress = () => {
     navigation.navigate('Current Movie', {data, type});
   };
   useEffect(() => {
     type === 'movie' ? setMediaType('Movie') : setMediaType('TV series');
   }, [type]);
+
+  useEffect(() => {
+    setIsFavorite(checkFavorite(data));
+  }, [data, checkFavorite]);
+
+  useEffect(() => {
+    setTitle(type === 'movie' ? data.title : data.name);
+  }, [data.name, data.title, type]);
+
   return (
     <TouchableOpacity onPress={onPress} style={styles.container}>
       {data && (
@@ -37,11 +56,19 @@ export const ListItem: FC<ListItemProps> = ({data, navigation, type}) => {
               vote={data.vote_average}
               containerStyle={styles.containerRating}
             />
+            <FavoriteIcon
+              containerStyle={styles.containerFavorite}
+              isFavorite={isFavorite}
+            />
           </View>
           <View style={styles.containerMainText}>
-            <View style={styles.containerTitle}>
-              <Text style={styles.text}>
-                {type === 'movie' ? data.title : data.name}
+            <View
+              style={[
+                styles.containerTitle,
+                title.length > 40 && styles.containerTitleLong,
+              ]}>
+              <Text style={[styles.text, title.length > 40 && styles.textLong]}>
+                {title}
               </Text>
             </View>
             <View style={styles.containerDate}>
@@ -70,17 +97,24 @@ const styles = StyleSheet.create({
     bottom: dh(298),
     left: dw(145),
   },
+  containerFavorite: {
+    bottom: dh(290),
+    left: dw(71),
+  },
   containerMainText: {
     marginHorizontal: dw(10),
   },
   containerTitle: {
-    height: dh(85),
-    bottom: dw(10),
+    height: dh(60),
+    bottom: dw(35),
+  },
+  containerTitleLong: {
+    bottom: dw(40),
   },
   containerDate: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: dw(15),
+    bottom: dw(20),
   },
   image: {
     width: dw(190),
@@ -95,5 +129,8 @@ const styles = StyleSheet.create({
   textDate: {
     color: COLORS.ATHENS_GRAY,
     fontSize: 14,
+  },
+  textLong: {
+    fontSize: 15,
   },
 });

@@ -3,12 +3,15 @@ import {FlatList, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {COLORS} from '../../constants/colors';
 import {useAppDispatch, useAppSelector} from '../../hooks/redux';
 import {
+  addFavorite,
+  deleteFavorite,
   fetchMoreDetails,
   fetchVideo,
 } from '../../redux/store/reducers/actionCreator';
 import {CastItemType, CastPhotoType} from '../../types/cast';
 import {MovieData} from '../../types/movieData';
 import {dh, dw} from '../../utils/dimensions';
+import {checkFavoriteItem} from '../common/functions/favorite';
 import {CastPhoto} from './components/castPhoto';
 import {CurrentMovieHeader} from './components/header';
 
@@ -16,8 +19,11 @@ export const CurrentMovie: FC = (props: any) => {
   const [state, setState] = useState<MovieData>();
   const [cast, setCast] = useState<CastPhotoType[]>([]);
   const [type, setType] = useState<string>('');
+  const [isFavorite, setIsFavorite] = useState<any>(false);
 
   const {isTheme} = useAppSelector(reducer => reducer.themeReducer);
+
+  const {favoriteState} = useAppSelector(reducer => reducer.favoriteReducer);
 
   const dispatch = useAppDispatch();
 
@@ -45,15 +51,35 @@ export const CurrentMovie: FC = (props: any) => {
     });
   }, [dispatch, props.route.params.data, props.route.params.type]);
 
+  useEffect(() => {
+    if (state) {
+      setIsFavorite(checkFavoriteItem(state, favoriteState));
+    }
+  }, [favoriteState, state]);
+
   const renderItem: any = (item: CastItemType) => {
     return <CastPhoto data={item.item} isTheme={isTheme} />;
+  };
+
+  const pressFavorite = () => {
+    if (state) {
+      checkFavoriteItem(state, favoriteState)
+        ? dispatch(deleteFavorite(state))
+        : dispatch(addFavorite(state));
+    }
   };
 
   return (
     <ScrollView style={[styles.container, isTheme && styles.containerActive]}>
       {state ? (
         <View>
-          <CurrentMovieHeader state={state} type={type} isTheme={isTheme} />
+          <CurrentMovieHeader
+            state={state}
+            type={type}
+            isTheme={isTheme}
+            pressFavorite={pressFavorite}
+            isFavorite={isFavorite}
+          />
           {cast.length > 2 && (
             <View>
               <FlatList<CastPhotoType>

@@ -12,6 +12,7 @@ import {MovieData} from '../../types/movieData';
 import {View, ActivityIndicator, StyleSheet} from 'react-native';
 import {COLORS} from '../../constants/colors';
 import {dh, dw} from '../../utils/dimensions';
+import {checkFavoriteItem} from '../common/functions/favorite';
 
 interface RenderPageProps {
   navigation?: any;
@@ -48,6 +49,12 @@ export const RenderPage: FC<RenderPageProps> = ({
   const {searchIsLoading} = useAppSelector(reducer => reducer.searchReducer);
 
   const {isTheme} = useAppSelector(reducer => reducer.themeReducer);
+
+  const {favoriteState} = useAppSelector(reducer => reducer.favoriteReducer);
+
+  const checkFavorite = (data: MovieData) => {
+    return checkFavoriteItem(data, favoriteState);
+  };
 
   useEffect(() => {
     setError('Enter valid text to search');
@@ -198,11 +205,12 @@ export const RenderPage: FC<RenderPageProps> = ({
           currentPage={currentPage}
           allPageCurrent={allPageCurrent}
           type={type}
+          error={error}
           onSearch={onSearch}
           nextPage={nextPage}
           prevPage={prevPage}
           installationCurrentPage={installationCurrentPage}
-          error={error}
+          checkFavorite={checkFavorite}
         />
       ) : isLoading ? (
         <View style={styles.containerLoader}>
@@ -219,6 +227,7 @@ export const RenderPage: FC<RenderPageProps> = ({
           nextPage={nextPage}
           prevPage={prevPage}
           installationCurrentPage={installationCurrentPage}
+          checkFavorite={checkFavorite}
         />
       )}
     </View>

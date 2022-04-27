@@ -13,4 +13,5 @@ export const COLORS = {
   OXFORD_BLUE: '#39445A',
   SAN_MARINO: '#3F51B5',
   APPLE: '#60B53F',
+  RED: '#FF0000',
 };

@@ -8,6 +8,8 @@ import {GenresSlice} from './genresSlice';
 import {PagesSlice} from './pagesSlice';
 import {SearchSlice} from './searchSlice';
 import {ThemeSlice} from './themeSlice';
+import {FavoriteSlice} from './favoriteSlice';
+import {MovieData} from '../../../types/movieData';
 
 export const fetchMovies = createAsyncThunk(
   'fetchMovies',
@@ -132,4 +134,16 @@ export const setLogin = () => (dispatch: AppDispatch) => {
 
 export const setTheme = () => (dispatch: AppDispatch) => {
   dispatch(ThemeSlice.actions.setTheme());
+};
+
+export const addFavorite = (item: MovieData) => (dispatch: AppDispatch) => {
+  dispatch(FavoriteSlice.actions.incrementFavorite(item));
+};
+
+export const deleteFavorite = (item: MovieData) => (dispatch: AppDispatch) => {
+  dispatch(FavoriteSlice.actions.decrementFavorite(item));
+};
+
+export const setFavorite = () => (dispatch: AppDispatch) => {
+  dispatch(FavoriteSlice.actions.setFavoriteState());
 };

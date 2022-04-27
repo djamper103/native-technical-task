@@ -8,6 +8,7 @@ import loginReducer from './reducers/loginSlice';
 import themeReducer from './reducers/themeSlice';
 import videoReducer from './reducers/videoSlice';
 import detailsReducer from './reducers/moreDetailsSlice';
+import favoriteReducer from './reducers/favoriteSlice';
 
 const rootReducer = combineReducers({
   moviesReducer,
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
   themeReducer,
   videoReducer,
   detailsReducer,
+  favoriteReducer,
 });
 
 export const setupStore = () => {

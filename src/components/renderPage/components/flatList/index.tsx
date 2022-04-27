@@ -18,6 +18,7 @@ interface HomePageListProps {
   prevPage: () => void;
   nextPage: () => void;
   installationCurrentPage: (value: any) => void;
+  checkFavorite: (value: MovieData) => void;
 }
 
 export const HomePageList: FC<HomePageListProps> = ({
@@ -31,9 +32,17 @@ export const HomePageList: FC<HomePageListProps> = ({
   prevPage,
   nextPage,
   installationCurrentPage,
+  checkFavorite,
 }) => {
   const renderItem: any = ({item}: {item: MovieData}) => {
-    return <ListItem data={item} navigation={navigation} type={type} />;
+    return (
+      <ListItem
+        data={item}
+        navigation={navigation}
+        type={type}
+        checkFavorite={checkFavorite}
+      />
+    );
   };
   return (
     <>

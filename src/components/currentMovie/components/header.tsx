@@ -5,18 +5,23 @@ import {imagePath} from '../../../constants/common';
 import {NO_PICTURE_LONG_ICON} from '../../../constants/images';
 import {MovieData} from '../../../types/movieData';
 import {dh, dw} from '../../../utils/dimensions';
+import {FavoriteIcon} from '../../common/favorite';
 import {VoteContainer} from '../../common/vote';
 
 interface CurrentMovieHeaderProps {
   state: MovieData;
   type: string;
   isTheme?: boolean;
+  isFavorite?: boolean;
+  pressFavorite: () => void;
 }
 
 export const CurrentMovieHeader: FC<CurrentMovieHeaderProps> = ({
   state,
   type,
   isTheme,
+  isFavorite,
+  pressFavorite,
 }) => {
   const [date, setDate] = useState<string | undefined>('');
 
@@ -25,6 +30,10 @@ export const CurrentMovieHeader: FC<CurrentMovieHeaderProps> = ({
       type === 'movie' ? state.release_date : state.first_air_date;
     setDate(currentType?.split('-')[0]);
   }, [state, type]);
+
+  const onPressFavorite = () => {
+    pressFavorite();
+  };
 
   return (
     <View style={styles.container}>
@@ -43,6 +52,11 @@ export const CurrentMovieHeader: FC<CurrentMovieHeaderProps> = ({
           vote={state.vote_average}
           containerStyle={styles.containerVote}
         />
+        <FavoriteIcon
+          containerStyle={styles.containerFavorite}
+          onPress={onPressFavorite}
+          isFavorite={isFavorite}
+        />
       </View>
       <View style={styles.containerHeaderText}>
         <Text
@@ -60,12 +74,15 @@ const styles = StyleSheet.create({
   },
   containerHeaderText: {
     alignItems: 'center',
-    bottom: dw(10),
-    marginBottom: dw(20),
+    bottom: dw(15),
   },
   containerVote: {
-    bottom: dh(240),
-    left: dw(355),
+    bottom: dh(235),
+    left: dw(10),
+  },
+  containerFavorite: {
+    bottom: dh(272),
+    left: dw(180),
   },
   image: {
     resizeMode: 'contain',
@@ -76,6 +93,7 @@ const styles = StyleSheet.create({
     color: COLORS.BLACK,
     fontSize: 16,
     textAlign: 'center',
+    bottom: dw(20),
   },
   textTitle: {
     fontSize: 24,
