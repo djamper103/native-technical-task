@@ -80,17 +80,15 @@ export const CurrentMovie: FC = (props: any) => {
             pressFavorite={pressFavorite}
             isFavorite={isFavorite}
           />
-          {cast.length > 2 && (
-            <View>
-              <FlatList<CastPhotoType>
-                data={cast}
-                keyExtractor={item => item.profile_path + item.name}
-                renderItem={renderItem}
-                horizontal={true}
-                showsHorizontalScrollIndicator={false}
-              />
-            </View>
-          )}
+          <View>
+            <FlatList<CastPhotoType>
+              data={cast}
+              keyExtractor={item => item.profile_path + item.name}
+              renderItem={renderItem}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+            />
+          </View>
           <View style={styles.containerOverview}>
             <Text style={[styles.text, isTheme && styles.textActive]}>
               {' '}
@@ -121,8 +119,9 @@ const styles = StyleSheet.create({
     marginTop: dh(150),
   },
   containerOverview: {
-    marginHorizontal: dw(10),
-    marginBottom: dw(10),
+    margin: dw(10),
+    // marginHorizontal: dw(10),
+    // marginBottom: dw(10),
   },
   image: {
     width: 100,

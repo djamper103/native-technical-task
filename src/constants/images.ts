@@ -18,9 +18,12 @@ import SIGN_IN from '../../assets/images/sign_in/sign_in.png';
 import SIGN_OUT from '../../assets/images/sign_out/sign_out.png';
 
 import MOVIE from '../../assets/images/common/movie.jpg';
+import TV_SERIES from '../../assets/images/common/tv_series.png';
 
 import NO_PICTURE from '../../assets/images/default/no_picture.jpg';
 import NO_PICTURE_LONG from '../../assets/images/default/no_picture_long.jpg';
+
+import FAVORITE_DEFAULT from '../../assets/images/default/favorite.jpg';
 
 export const SEARCH_ICON = SEARCH;
 export const DEFAULT_PERSON_ICON = DEFAULT_PERSON;
@@ -42,6 +45,9 @@ export const SIGN_IN_ICON = SIGN_IN;
 export const SIGN_OUT_ICON = SIGN_OUT;
 
 export const MOVIE_ICON = MOVIE;
+export const TV_SERIES_ICON = TV_SERIES;
 
 export const NO_PICTURE_ICON = NO_PICTURE;
 export const NO_PICTURE_LONG_ICON = NO_PICTURE_LONG;
+
+export const FAVORITE_DEFAULT_ICON = FAVORITE_DEFAULT;

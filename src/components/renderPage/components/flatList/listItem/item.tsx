@@ -10,8 +10,9 @@ import {FavoriteIcon} from '../../../../common/favorite';
 interface ListItemProps {
   data: MovieData;
   navigation?: any;
-  type: string;
+  type?: string;
   checkFavorite: (value: MovieData) => void;
+  onPressFavorite: (value: MovieData) => void;
 }
 
 export const ListItem: FC<ListItemProps> = ({
@@ -19,25 +20,35 @@ export const ListItem: FC<ListItemProps> = ({
   navigation,
   type,
   checkFavorite,
+  onPressFavorite,
 }) => {
-  const [mediaType, setMediaType] = useState('');
+  const [mediaType, setMediaType] = useState('Movie');
   const [isFavorite, setIsFavorite] = useState<any>(false);
   const [title, setTitle] = useState<any>('Title');
 
   const onPress = () => {
-    navigation.navigate('Current Movie', {data, type});
+    navigation.navigate('Current Movie', {
+      data,
+      type: type,
+    });
   };
   useEffect(() => {
-    type === 'movie' ? setMediaType('Movie') : setMediaType('TV series');
-  }, [type]);
+    data.title === undefined
+      ? setMediaType('TV series')
+      : setMediaType('Movie');
+  }, [data]);
 
   useEffect(() => {
     setIsFavorite(checkFavorite(data));
   }, [data, checkFavorite]);
 
   useEffect(() => {
-    setTitle(type === 'movie' ? data.title : data.name);
-  }, [data.name, data.title, type]);
+    setTitle(data.title === undefined ? data.name : data.title);
+  }, [data.media_type, data.name, data.title]);
+
+  const pressFavorite = () => {
+    onPressFavorite(data);
+  };
 
   return (
     <TouchableOpacity onPress={onPress} style={styles.container}>
@@ -56,10 +67,12 @@ export const ListItem: FC<ListItemProps> = ({
               vote={data.vote_average}
               containerStyle={styles.containerRating}
             />
-            <FavoriteIcon
-              containerStyle={styles.containerFavorite}
-              isFavorite={isFavorite}
-            />
+            <TouchableOpacity onPress={pressFavorite}>
+              <FavoriteIcon
+                containerStyle={styles.containerFavorite}
+                isFavorite={isFavorite}
+              />
+            </TouchableOpacity>
           </View>
           <View style={styles.containerMainText}>
             <View
@@ -74,7 +87,9 @@ export const ListItem: FC<ListItemProps> = ({
             <View style={styles.containerDate}>
               <Text style={styles.textDate}>{mediaType}</Text>
               <Text style={styles.textDate}>
-                {type === 'movie' ? data.release_date : data.first_air_date}
+                {mediaType === 'Movie'
+                  ? data.release_date
+                  : data.first_air_date}
               </Text>
             </View>
           </View>
@@ -86,7 +101,7 @@ export const ListItem: FC<ListItemProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    width: dw(190),
     margin: dw(5),
   },
   containerMain: {
@@ -94,7 +109,7 @@ const styles = StyleSheet.create({
     borderRadius: dw(14),
   },
   containerRating: {
-    bottom: dh(298),
+    bottom: dh(296),
     left: dw(145),
   },
   containerFavorite: {

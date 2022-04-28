@@ -1,10 +1,12 @@
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import React, {FC} from 'react';
+import {StatusBar} from 'react-native';
 import {COLORS} from '../constants/colors';
 import {useAppSelector} from '../hooks/redux';
 import {dw} from '../utils/dimensions';
-import {Tabs} from './components/index';
+import {DrawerScreen} from './components/index';
+// import {Tabs} from './components/tabs';
 import {routesStack} from './routes';
 
 export const NavigationContainerFC: FC = () => {
@@ -13,10 +15,20 @@ export const NavigationContainerFC: FC = () => {
 
   return (
     <NavigationContainer>
+      <StatusBar
+        backgroundColor={isTheme ? COLORS.CLOUD_BURST : COLORS.STEEL_BLUE}
+      />
       <Stack.Navigator>
-        <Stack.Screen
+        {/* <Stack.Screen
           name="Tabs"
           component={Tabs}
+          options={{
+            headerShown: false,
+          }}
+        /> */}
+        <Stack.Screen
+          name="Drawer"
+          component={DrawerScreen}
           options={{
             headerShown: false,
           }}
@@ -39,6 +51,9 @@ export const NavigationContainerFC: FC = () => {
                 height: dw(57),
               },
               headerTintColor: COLORS.WHITE,
+              cardStyle: {
+                backgroundColor: isTheme ? COLORS.OXFORD_BLUE : COLORS.WHITE,
+              },
             }}
           />
         ))}

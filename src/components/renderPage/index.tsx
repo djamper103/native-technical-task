@@ -2,7 +2,9 @@ import React, {FC, useEffect, useState} from 'react';
 import {HomePageList} from './components/flatList';
 import {useAppDispatch, useAppSelector} from '../../hooks/redux';
 import {
+  addFavorite,
   decrementPage,
+  deleteFavorite,
   fetchSearch,
   incrementPage,
   setCurrentPage,
@@ -13,6 +15,7 @@ import {View, ActivityIndicator, StyleSheet} from 'react-native';
 import {COLORS} from '../../constants/colors';
 import {dh, dw} from '../../utils/dimensions';
 import {checkFavoriteItem} from '../common/functions/favorite';
+import {ErrorContainer} from '../common/errorContainer';
 
 interface RenderPageProps {
   navigation?: any;
@@ -51,10 +54,6 @@ export const RenderPage: FC<RenderPageProps> = ({
   const {isTheme} = useAppSelector(reducer => reducer.themeReducer);
 
   const {favoriteState} = useAppSelector(reducer => reducer.favoriteReducer);
-
-  const checkFavorite = (data: MovieData) => {
-    return checkFavoriteItem(data, favoriteState);
-  };
 
   useEffect(() => {
     setError('Enter valid text to search');
@@ -174,6 +173,7 @@ export const RenderPage: FC<RenderPageProps> = ({
         currentFetch({
           type: type,
           curentPage: currentPage,
+          currentGenre: genreType,
         }),
       ).then((el: any) => {
         setAllPageCurrent(el.payload.total_pages);
@@ -192,43 +192,45 @@ export const RenderPage: FC<RenderPageProps> = ({
         setAllPageCurrent(el.payload.total_pages);
         setState(el.payload.results);
         dispatch(setCurrentPage(1));
+        console.log(error);
       });
     }
   };
 
+  const checkFavorite = (data: MovieData) => {
+    return checkFavoriteItem(data, favoriteState);
+  };
+
+  const onPressFavorite = (data: MovieData) => {
+    checkFavoriteItem(data, favoriteState)
+      ? dispatch(deleteFavorite(data))
+      : dispatch(addFavorite(data));
+  };
+
   return (
     <View style={[styles.container, isTheme && styles.containerActive]}>
-      {error ? (
-        <HomePageList
-          state={state && state}
-          navigation={navigation}
-          currentPage={currentPage}
-          allPageCurrent={allPageCurrent}
-          type={type}
-          error={error}
-          onSearch={onSearch}
-          nextPage={nextPage}
-          prevPage={prevPage}
-          installationCurrentPage={installationCurrentPage}
-          checkFavorite={checkFavorite}
-        />
-      ) : isLoading ? (
-        <View style={styles.containerLoader}>
-          <ActivityIndicator size={dw(150)} color={COLORS.STEEL_BLUE} />
-        </View>
+      {error === '' ? (
+        isLoading ? (
+          <View style={styles.containerLoader}>
+            <ActivityIndicator size={dw(150)} color={COLORS.STEEL_BLUE} />
+          </View>
+        ) : (
+          <HomePageList
+            state={state && state}
+            navigation={navigation}
+            currentPage={currentPage}
+            allPageCurrent={allPageCurrent}
+            type={type}
+            onSearch={onSearch}
+            nextPage={nextPage}
+            prevPage={prevPage}
+            installationCurrentPage={installationCurrentPage}
+            checkFavorite={checkFavorite}
+            onPressFavorite={onPressFavorite}
+          />
+        )
       ) : (
-        <HomePageList
-          state={state && state}
-          navigation={navigation}
-          currentPage={currentPage}
-          allPageCurrent={allPageCurrent}
-          type={type}
-          onSearch={onSearch}
-          nextPage={nextPage}
-          prevPage={prevPage}
-          installationCurrentPage={installationCurrentPage}
-          checkFavorite={checkFavorite}
-        />
+        <ErrorContainer isTheme={isTheme} text={error} />
       )}
     </View>
   );
@@ -237,6 +239,7 @@ export const RenderPage: FC<RenderPageProps> = ({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: COLORS.WHITE,
+    flex: 1,
   },
   containerActive: {
     backgroundColor: COLORS.OXFORD_BLUE,

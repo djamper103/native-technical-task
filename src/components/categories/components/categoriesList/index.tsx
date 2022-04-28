@@ -1,8 +1,9 @@
 import React, {FC} from 'react';
 import {StyleSheet, View} from 'react-native';
-import {useAppDispatch} from '../../../../hooks/redux';
+import {COLORS} from '../../../../constants/colors';
+import {MOVIE_ICON, TV_SERIES_ICON} from '../../../../constants/images';
+import {useAppDispatch, useAppSelector} from '../../../../hooks/redux';
 import {fetchGenres} from '../../../../redux/store/reducers/actionCreator';
-import {dw} from '../../../../utils/dimensions';
 import {TypeGenres} from '../type';
 
 interface CategoriesProps {
@@ -10,6 +11,8 @@ interface CategoriesProps {
 }
 
 export const Categories: FC<CategoriesProps> = ({navigation}) => {
+  const {isTheme} = useAppSelector(reducer => reducer.themeReducer);
+
   const dispatch = useAppDispatch();
   const onPressMV = () => {
     dispatch(fetchGenres('movie'));
@@ -20,18 +23,31 @@ export const Categories: FC<CategoriesProps> = ({navigation}) => {
     navigation.navigate('Genres', {type: 'tv'});
   };
   return (
-    <View style={styles.container}>
-      <TypeGenres onPress={onPressMV} placeHolder={'Movie'} />
-      <TypeGenres onPress={onPressTV} placeHolder={'TV Series'} />
+    <View style={[styles.container, isTheme && styles.containerActive]}>
+      <TypeGenres
+        placeHolder={'Movie'}
+        isTheme={isTheme}
+        image={MOVIE_ICON}
+        onPress={onPressMV}
+      />
+      <TypeGenres
+        placeHolder={'TV Series'}
+        isTheme={isTheme}
+        image={TV_SERIES_ICON}
+        onPress={onPressTV}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'space-between',
+    flex: 1,
+    backgroundColor: COLORS.WHITE,
+    justifyContent: 'center',
     alignItems: 'center',
-    margin: dw(50),
-    // backgroundColor: COLORS.OXFORD_BLUE,
+  },
+  containerActive: {
+    backgroundColor: COLORS.OXFORD_BLUE,
   },
 });

@@ -18,6 +18,7 @@ interface InputProps {
   placeholder?: string;
   placeholderTextColor?: string;
   isTheme?: boolean;
+  secureTextEntry?: boolean;
   inputStyle?: ViewStyle;
   containerStyle?: ViewStyle;
   containerLeftIcon?: ViewStyle;
@@ -34,6 +35,7 @@ export const Input: FC<InputProps> = ({
   placeholder = 'Search',
   placeholderTextColor = COLORS.BLACK,
   isTheme,
+  secureTextEntry,
   inputStyle,
   containerStyle,
   containerLeftIcon,
@@ -62,6 +64,7 @@ export const Input: FC<InputProps> = ({
         placeholder={placeholder}
         style={[styles.input, inputStyle && inputStyle]}
         placeholderTextColor={placeholderTextColor}
+        secureTextEntry={secureTextEntry}
       />
       {rightIcon && (
         <TouchableOpacity

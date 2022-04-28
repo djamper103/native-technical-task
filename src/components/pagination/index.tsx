@@ -3,14 +3,14 @@ import {
   FlatList,
   Image,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 import {COLORS} from '../../constants/colors';
 import {ARROW_LEFT_ICON, ARROW_RIGHT_ICON} from '../../constants/images';
 import {Count} from '../../types/pagination';
-import {dh, dw} from '../../utils/dimensions';
+import {dw} from '../../utils/dimensions';
+import {RenderItem} from './components/renderItem';
 
 interface PaginationProps {
   page: number;
@@ -64,22 +64,7 @@ export const Pagination: FC<PaginationProps> = ({
   };
 
   const renderItem: any = (item: any) => {
-    const onPressPage = () => {
-      onPressItem(item.item.page);
-    };
-    return (
-      <TouchableOpacity
-        style={[
-          styles.containerPage,
-          item.item.page === page && styles.containerPageActive,
-        ]}
-        onPress={onPressPage}>
-        <Text
-          style={[styles.text, item.item.page === page && styles.textActive]}>
-          {item.item.page}
-        </Text>
-      </TouchableOpacity>
-    );
+    return <RenderItem data={item} onPressItem={onPressItem} page={page} />;
   };
 
   return (
@@ -119,26 +104,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  containerPage: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: dw(50),
-    height: dh(50),
-  },
-  containerPageActive: {
-    backgroundColor: COLORS.STEEL_BLUE,
-  },
   image: {
     resizeMode: 'contain',
     backgroundColor: COLORS.TRANSPARENT,
     tintColor: COLORS.STEEL_BLUE,
     marginHorizontal: dw(10),
-  },
-  text: {
-    fontSize: 16,
-    color: COLORS.ALUMINIUM,
-  },
-  textActive: {
-    color: COLORS.WHITE,
   },
 });

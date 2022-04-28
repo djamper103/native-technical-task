@@ -9,16 +9,18 @@ import {ListItem} from './listItem/item';
 
 interface HomePageListProps {
   state?: MovieData[];
-  currentPage: number;
-  allPageCurrent: number;
+  currentPage?: any;
+  allPageCurrent?: any;
   navigation?: any;
-  type: string;
+  type?: any;
   error?: string;
+  pageType?: string;
   onSearch: (value: string) => void;
   prevPage: () => void;
   nextPage: () => void;
   installationCurrentPage: (value: any) => void;
   checkFavorite: (value: MovieData) => void;
+  onPressFavorite: (value: MovieData) => void;
 }
 
 export const HomePageList: FC<HomePageListProps> = ({
@@ -28,11 +30,13 @@ export const HomePageList: FC<HomePageListProps> = ({
   navigation,
   type,
   error,
+  pageType,
   onSearch,
   prevPage,
   nextPage,
   installationCurrentPage,
   checkFavorite,
+  onPressFavorite,
 }) => {
   const renderItem: any = ({item}: {item: MovieData}) => {
     return (
@@ -41,6 +45,7 @@ export const HomePageList: FC<HomePageListProps> = ({
         navigation={navigation}
         type={type}
         checkFavorite={checkFavorite}
+        onPressFavorite={onPressFavorite}
       />
     );
   };
@@ -57,21 +62,23 @@ export const HomePageList: FC<HomePageListProps> = ({
         <FlatList<MovieData>
           data={state}
           bounces={false}
-          keyExtractor={item =>
-            type === 'movie' ? item.title : item.name + item.release_date
-          }
+          keyExtractor={item => item.id}
           renderItem={renderItem}
           showsVerticalScrollIndicator={false}
           numColumns={2}
-          ListHeaderComponent={<Search onSearch={onSearch} />}
+          ListHeaderComponent={
+            pageType === 'favorite' ? null : <Search onSearch={onSearch} />
+          }
           ListFooterComponent={
-            <Pagination
-              page={currentPage}
-              allPages={allPageCurrent}
-              onLeftPress={prevPage}
-              onRightPress={nextPage}
-              onPressItem={installationCurrentPage}
-            />
+            pageType === 'favorite' ? null : (
+              <Pagination
+                page={currentPage}
+                allPages={allPageCurrent}
+                onLeftPress={prevPage}
+                onRightPress={nextPage}
+                onPressItem={installationCurrentPage}
+              />
+            )
           }
         />
       )}
