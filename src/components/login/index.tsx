@@ -1,71 +1,141 @@
-import React, {useState, FC, useEffect} from 'react';
-import {View, Text, Button} from 'react-native';
-import auth from '@react-native-firebase/auth';
+import React, {FC, useEffect, useState} from 'react';
+import {Text, View, StyleSheet, Pressable, Alert} from 'react-native';
+import {useForm, Controller} from 'react-hook-form';
 import {Input} from 'components/input';
-// import firestore from '@react-native-firebase';
+import {COLORS} from 'constants/colors';
+import {dw} from 'utils/dimensions';
+import auth from '@react-native-firebase/auth';
+import {SignIn} from 'types/login';
 
 interface LoginProps {
   navigation?: any;
 }
 
 export const Login: FC<LoginProps> = ({navigation}) => {
-  const [user, setUser] = useState<any>();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const {
+    control,
+    handleSubmit,
+    formState: {errors},
+  } = useForm({
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
 
-  const onPress = async () => {
+  const onSubmit = async (data: SignIn) => {
     try {
       await auth()
-        .createUserWithEmailAndPassword(email, password)
-        .then(e => {
-          console.log(e);
+        .signInWithEmailAndPassword(data.email, data.password)
+        .then(() => {
+          if (error === '') {
+            navigation.navigate('Home');
+          } else {
+            Alert.alert('something went wrong please try again');
+          }
         });
-    } catch (error) {
-      console.log('Something went wrong with added user to firestore: ', error);
-    }
-  };
-
-  const logout = async () => {
-    try {
-      await auth().signOut();
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  const signIn = async () => {
-    try {
-      await auth().signInWithEmailAndPassword(email, password);
-    } catch (e) {
-      console.log(e);
+    } catch (er: any) {
+      setError(er);
     }
   };
 
   useEffect(() => {
-    setUser(auth().currentUser);
-  }, [user]);
+    console.log(auth().currentUser);
+    auth().currentUser && navigation.navigate('Home');
+  }, []);
 
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
+  // const logout = async () => {
+  //   try {
+  //     await auth().signOut();
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // };
 
   const registration = () => {
     navigation.navigate('Registration');
   };
 
   return (
-    <View>
-      <Input onChangeText={setEmail} text={email} />
-      <Input
-        secureTextEntry={true}
-        onChangeText={setPassword}
-        text={password}
+    <View style={styles.container}>
+      <Controller
+        control={control}
+        // rules={{
+        //   required: true,
+        //   pattern: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+        // }}
+        render={({field: {onChange, value}}) => (
+          <Input onChangeText={onChange} text={value} placeholder={'Email'} />
+        )}
+        name="email"
       />
-      <Button title="Sign in" onPress={onPress} />
-      <Button title="Registration" onPress={registration} />
+      {errors.email && <Text style={styles.text}>Enter email correctly</Text>}
+
+      <Controller
+        control={control}
+        // rules={{
+        //   maxLength: 12,
+        //   minLength: 6,
+        //   required: true,
+        //   pattern: /^(?=.*[A-Z])(?=.*[0-9])(?=.*[ -/:-@|[-`{-~]).{6,12}$/,
+        // }}
+        render={({field: {onChange, value}}) => (
+          <Input
+            onChangeText={onChange}
+            text={value}
+            placeholder={'Password'}
+            secureTextEntry={true}
+          />
+        )}
+        name="password"
+      />
+      {errors.password && (
+        <Text style={styles.text}>
+          Password must start with a capital letter and be at least 6 characters
+          long max 12
+        </Text>
+      )}
+
+      <View style={styles.containerButton}>
+        <Pressable onPress={handleSubmit(onSubmit)} style={styles.button}>
+          <Text style={styles.buttonText}>Submit</Text>
+        </Pressable>
+        <Pressable onPress={registration} style={styles.button}>
+          <Text style={styles.buttonText}>Registration</Text>
+        </Pressable>
+      </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    marginTop: dw(10),
+  },
+  containerButton: {
+    alignItems: 'center',
+    marginTop: dw(10),
+  },
+  text: {
+    color: COLORS.RED,
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  button: {
+    backgroundColor: COLORS.STEEL_BLUE,
+    width: dw(160),
+    height: dw(60),
+    borderRadius: dw(15),
+    justifyContent: 'center',
+    marginBottom: dw(15),
+  },
+  buttonText: {
+    color: COLORS.WHITE,
+    fontSize: 24,
+    textAlign: 'center',
+  },
+});
 
 // import React, {FC, useCallback, useState} from 'react';
 // import {
