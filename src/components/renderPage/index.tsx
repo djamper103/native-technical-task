@@ -1,21 +1,23 @@
 import React, {FC, useEffect, useState} from 'react';
 import {HomePageList} from './components/flatList';
 import {useAppDispatch, useAppSelector} from '../../hooks/redux';
-import {
-  addFavorite,
-  decrementPage,
-  deleteFavorite,
-  fetchSearch,
-  incrementPage,
-  setCurrentPage,
-  setSearchText,
-} from '../../redux/store/reducers/actionCreator';
 import {MovieData} from '../../types/movieData';
 import {View, ActivityIndicator, StyleSheet} from 'react-native';
 import {COLORS} from '../../constants/colors';
 import {dh, dw} from '../../utils/dimensions';
 import {checkFavoriteItem} from '../common/functions/favorite';
 import {ErrorContainer} from '../common/errorContainer';
+import {
+  decrementPage,
+  fetchSearch,
+  incrementPage,
+  setCurrentPage,
+  setSearchText,
+} from 'redux/store/actionCreator/actionCreator';
+import {
+  addFavorite,
+  deleteFavorite,
+} from 'redux/store/actionCreator/actionCreatorFavorite';
 
 interface RenderPageProps {
   navigation?: any;

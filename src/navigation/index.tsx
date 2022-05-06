@@ -1,17 +1,25 @@
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import React, {FC} from 'react';
+import React, {FC, useEffect} from 'react';
 import {StatusBar} from 'react-native';
 import {COLORS} from '../constants/colors';
-import {useAppSelector} from '../hooks/redux';
+import {useAppDispatch, useAppSelector} from '../hooks/redux';
 import {dw} from '../utils/dimensions';
 import {DrawerScreen} from './components/index';
 // import {Tabs} from './components/tabs';
 import {routesStack} from './routes';
+import auth from '@react-native-firebase/auth';
+import {isSignIn} from 'redux/store/actionCreator/actionCreatorLogin';
 
 export const NavigationContainerFC: FC = () => {
   const Stack = createStackNavigator();
   const {isTheme} = useAppSelector(reducer => reducer.themeReducer);
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    auth().currentUser !== null && dispatch(isSignIn());
+  }, [dispatch]);
 
   return (
     <NavigationContainer>

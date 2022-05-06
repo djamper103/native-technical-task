@@ -1,9 +1,10 @@
 import React, {FC} from 'react';
 import {StyleSheet, View} from 'react-native';
+import {fetchGenres} from 'redux/store/actionCreator/actionCreator';
 import {COLORS} from '../../../../constants/colors';
 import {MOVIE_ICON, TV_SERIES_ICON} from '../../../../constants/images';
 import {useAppDispatch, useAppSelector} from '../../../../hooks/redux';
-import {fetchGenres} from '../../../../redux/store/reducers/actionCreator';
+
 import {TypeGenres} from '../type';
 
 interface CategoriesProps {

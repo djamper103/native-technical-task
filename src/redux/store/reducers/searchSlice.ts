@@ -1,6 +1,6 @@
-import {fetchSearch} from './actionCreator';
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {MovieData} from '../../../types/movieData';
+import {fetchSearch} from '../actionCreator/actionCreator';
 
 interface SearchState {
   searchState: MovieData[];

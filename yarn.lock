@@ -1295,6 +1295,21 @@
   resolved "https://registry.yarnpkg.com/@react-native-firebase/auth/-/auth-14.9.1.tgz#368b48bbfdae2b64246591ae42e70ff38a3fb17f"
   integrity sha512-pTZZ80xx4ionhBa7kj7YhUvZdvJazDHqPH1K+j648tlU/1iytM/N2Ius7Ty40O0m29GVp0l+fEdWpzSeaV775w==
 
+"@react-native-firebase/database@^14.9.1":
+  version "14.9.1"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/database/-/database-14.9.1.tgz#0551a17bd6a13f09ec67aa3fac940d10343b90fe"
+  integrity sha512-SqlLJX9p03KZTzHD+p+oLi0a077gkJStfBdyjOCOMLJ0y9Gh9IfiQ/TPAJfl5vNfmp4ltyCGOhH0PatcdS32jw==
+
+"@react-native-firebase/firestore@^14.9.1":
+  version "14.9.1"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/firestore/-/firestore-14.9.1.tgz#1dee9c1a31204194d3feae1f9a6e83384c2481e0"
+  integrity sha512-ZrrO0oy1XWZUn6ShtVJABy/SUs90io/faKP3mJ6iE1hq99OJy8NjtEFQUelGVzZ4dRTTv3kRH8En8KKopdvgHw==
+
+"@react-native-firebase/storage@^14.9.1":
+  version "14.9.1"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/storage/-/storage-14.9.1.tgz#1e77301bb6263232c1026b36f200c99ae860e827"
+  integrity sha512-6tBCv3h/eYG2yQUzYqyZIP7yCMcwwpYxKiWnbBShkpAQ6INssC5l1I5x0jSCiQvpWWdKEPlTEF46Bs5eyEKaYg==
+
 "@react-native/assets@1.0.0":
   version "1.0.0"
   resolved "https://registry.npmjs.org/@react-native/assets/-/assets-1.0.0.tgz"
@@ -5933,6 +5948,11 @@ react-native-gesture-handler@^2.3.2:
     invariant "^2.2.4"
     lodash "^4.17.21"
     prop-types "^15.7.2"
+
+react-native-image-picker@^4.8.2:
+  version "4.8.2"
+  resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-4.8.2.tgz#a70c689879a042c1d7b7d585759831d2174c344d"
+  integrity sha512-4Hiwkw1hAxQn+5O/zPFkY+NrRPB2EMQ6CeX8fV0AKd2VtPsgCycF6NOUoO9MAt2mv2ums374pZkuG9zp8l7mfA==
 
 react-native-mmkv@^2.3.3:
   version "2.3.3"

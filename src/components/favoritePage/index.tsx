@@ -8,10 +8,12 @@ import {checkFavoriteItem} from '../common/functions/favorite';
 import {MovieData} from '../../types/movieData';
 import {dw} from '../../utils/dimensions';
 import {ErrorContainer} from '../common/errorContainer';
+import {} from 'redux/store/actionCreator/actionCreator';
 import {
   addFavorite,
   deleteFavorite,
-} from '../../redux/store/reducers/actionCreator';
+} from 'redux/store/actionCreator/actionCreatorFavorite';
+import {SignOut} from './components/signOut';
 
 interface FavoritePageProps {
   navigation?: any;
@@ -22,6 +24,7 @@ export const FavoritePage: FC<FavoritePageProps> = ({navigation}) => {
 
   const {favoriteState} = useAppSelector(reducer => reducer.favoriteReducer);
   const {isTheme} = useAppSelector(reducer => reducer.themeReducer);
+  const {isSignIn} = useAppSelector(reducer => reducer.loginReducer);
 
   const checkFavorite = (data: MovieData) => {
     return checkFavoriteItem(data, favoriteState);
@@ -35,23 +38,29 @@ export const FavoritePage: FC<FavoritePageProps> = ({navigation}) => {
 
   return (
     <View style={[styles.container, isTheme && styles.containerActive]}>
-      {favoriteState.length > 0 ? (
-        <HomePageList
-          state={favoriteState}
-          navigation={navigation}
-          pageType="favorite"
-          onSearch={_.noop}
-          prevPage={_.noop}
-          nextPage={_.noop}
-          installationCurrentPage={_.noop}
-          checkFavorite={checkFavorite}
-          onPressFavorite={onPressFavorite}
-        />
+      {isSignIn ? (
+        <>
+          {favoriteState.length > 0 ? (
+            <HomePageList
+              state={favoriteState}
+              navigation={navigation}
+              pageType="favorite"
+              onSearch={_.noop}
+              prevPage={_.noop}
+              nextPage={_.noop}
+              installationCurrentPage={_.noop}
+              checkFavorite={checkFavorite}
+              onPressFavorite={onPressFavorite}
+            />
+          ) : (
+            <ErrorContainer
+              isTheme={isTheme}
+              text={'Not data yet.Please add your favorite movies or tv series'}
+            />
+          )}
+        </>
       ) : (
-        <ErrorContainer
-          isTheme={isTheme}
-          text={'Not data yet.Please add your favorite movies or tv series'}
-        />
+        <SignOut navigation={navigation} isTheme={isTheme} />
       )}
     </View>
   );

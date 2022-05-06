@@ -4,7 +4,7 @@ export interface RegisrationType {
   name: string;
 }
 
-export interface SignIn {
+export interface SignInType {
   email: string;
   password: string;
 }

@@ -1,15 +1,11 @@
-import {LoginSlice} from './loginSlice';
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import axios from 'axios';
 import {appKey} from '../../../constants/common';
-
 import {AppDispatch} from '../store';
-import {GenresSlice} from './genresSlice';
-import {PagesSlice} from './pagesSlice';
-import {SearchSlice} from './searchSlice';
-import {ThemeSlice} from './themeSlice';
-import {FavoriteSlice} from './favoriteSlice';
-import {MovieData} from '../../../types/movieData';
+import {GenresSlice} from '../reducers/genresSlice';
+import {PagesSlice} from '../reducers/pagesSlice';
+import {SearchSlice} from '../reducers/searchSlice';
+import {ThemeSlice} from '../reducers/themeSlice';
 
 export const fetchMovies = createAsyncThunk(
   'fetchMovies',
@@ -128,22 +124,6 @@ export const nullSearchText = () => (dispatch: AppDispatch) => {
   dispatch(SearchSlice.actions.nullText());
 };
 
-export const setLogin = () => (dispatch: AppDispatch) => {
-  dispatch(LoginSlice.actions.signIn());
-};
-
 export const setTheme = () => (dispatch: AppDispatch) => {
   dispatch(ThemeSlice.actions.setTheme());
-};
-
-export const addFavorite = (item: MovieData) => (dispatch: AppDispatch) => {
-  dispatch(FavoriteSlice.actions.incrementFavorite(item));
-};
-
-export const deleteFavorite = (item: MovieData) => (dispatch: AppDispatch) => {
-  dispatch(FavoriteSlice.actions.decrementFavorite(item));
-};
-
-export const setFavorite = () => (dispatch: AppDispatch) => {
-  dispatch(FavoriteSlice.actions.setFavoriteState());
 };

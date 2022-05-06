@@ -1,11 +1,14 @@
 import React, {FC, useState} from 'react';
-import {Text, View, StyleSheet, Pressable, Alert} from 'react-native';
+import {Text, View, StyleSheet, Pressable, Alert, Platform} from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
 import {Input} from 'components/input';
 import {COLORS} from 'constants/colors';
 import {dw} from 'utils/dimensions';
 import {RegisrationType} from 'types/login';
-import auth from '@react-native-firebase/auth';
+import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
+import {patternEmail, patternPassword} from 'components/common/login';
+import {registration} from 'redux/store/actionCreator/actionCreatorLogin';
+import {useAppSelector} from 'hooks/redux';
 
 interface Registrationrops {
   navigation?: any;
@@ -13,6 +16,7 @@ interface Registrationrops {
 
 export const Registration: FC<Registrationrops> = ({navigation}) => {
   const [error, setError] = useState('');
+  const [uploadUri, setUploadUri] = useState('');
   const {
     control,
     handleSubmit,
@@ -24,18 +28,63 @@ export const Registration: FC<Registrationrops> = ({navigation}) => {
       name: '',
     },
   });
+  const {isRegistration} = useAppSelector(
+    reducer => reducer.registrationReducer,
+  );
   const onSubmit = async (data: RegisrationType) => {
     try {
-      await auth()
-        .createUserWithEmailAndPassword(data.email, data.password)
-        .then(() => {
-          if (error === '') {
-            navigation.navigate('Login');
-          } else {
-            Alert.alert('something went wrong please try again');
-          }
-        });
+      registration({
+        email: data.email,
+        password: data.password,
+        uploadUri: uploadUri,
+        name: data.name,
+      });
+      if (error === '' && isRegistration) {
+        navigation.navigate('Login');
+      } else {
+        Alert.alert('Something went wrong please try again');
+      }
     } catch (er: any) {
+      setError(er);
+    }
+  };
+
+  const uploadImage = async () => {
+    try {
+      await launchImageLibrary(
+        {
+          mediaType: 'photo',
+        },
+        (response: any) => {
+          setUploadUri(
+            Platform.OS === 'ios'
+              ? response.assets[0].uri.replace('file://', '')
+              : response.assets[0].uri,
+          );
+        },
+      );
+    } catch (er: any) {
+      Alert.alert('Something went wrong please try again');
+      setError(er);
+    }
+  };
+
+  const uploadPhoto = async () => {
+    try {
+      await launchCamera(
+        {
+          mediaType: 'photo',
+        },
+        (response: any) => {
+          setUploadUri(
+            Platform.OS === 'ios'
+              ? response.assets[0].uri.replace('file://', '')
+              : response.assets[0].uri,
+          );
+        },
+      );
+    } catch (er: any) {
+      Alert.alert('Something went wrong please try again');
       setError(er);
     }
   };
@@ -46,7 +95,7 @@ export const Registration: FC<Registrationrops> = ({navigation}) => {
         control={control}
         rules={{
           required: true,
-          pattern: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+          pattern: patternEmail,
         }}
         render={({field: {onChange, value}}) => (
           <Input onChangeText={onChange} text={value} placeholder={'Email'} />
@@ -61,7 +110,7 @@ export const Registration: FC<Registrationrops> = ({navigation}) => {
           maxLength: 12,
           minLength: 6,
           required: true,
-          pattern: /^(?=.*[A-Z])(?=.*[0-9])(?=.*[ -/:-@|[-`{-~]).{6,12}$/,
+          pattern: patternPassword,
         }}
         render={({field: {onChange, value}}) => (
           <Input
@@ -101,9 +150,19 @@ export const Registration: FC<Registrationrops> = ({navigation}) => {
         </Text>
       )}
       <View style={styles.containerButton}>
-        <Pressable onPress={handleSubmit(onSubmit)} style={styles.button}>
-          <Text style={styles.buttonText}>Submit</Text>
-        </Pressable>
+        <View style={styles.containerUpload}>
+          <Pressable onPress={uploadImage} style={styles.button}>
+            <Text style={styles.buttonText}>Upload Image</Text>
+          </Pressable>
+          <Pressable onPress={uploadPhoto} style={styles.button}>
+            <Text style={styles.buttonText}>Upload Photo</Text>
+          </Pressable>
+        </View>
+        <View style={styles.containerSubmit}>
+          <Pressable onPress={handleSubmit(onSubmit)} style={styles.button}>
+            <Text style={styles.buttonText}>Submit</Text>
+          </Pressable>
+        </View>
       </View>
     </View>
   );
@@ -114,8 +173,16 @@ const styles = StyleSheet.create({
     marginTop: dw(10),
   },
   containerButton: {
-    alignItems: 'center',
     marginTop: dw(10),
+  },
+  containerUpload: {
+    flexDirection: 'row',
+    marginBottom: dw(20),
+    justifyContent: 'space-between',
+    marginHorizontal: dw(25),
+  },
+  containerSubmit: {
+    alignItems: 'center',
   },
   text: {
     color: COLORS.RED,

@@ -1,11 +1,16 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useState} from 'react';
 import {Text, View, StyleSheet, Pressable, Alert} from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
 import {Input} from 'components/input';
 import {COLORS} from 'constants/colors';
 import {dw} from 'utils/dimensions';
-import auth from '@react-native-firebase/auth';
-import {SignIn} from 'types/login';
+import {MMKV} from 'react-native-mmkv';
+import {useAppDispatch, useAppSelector} from 'hooks/redux';
+import {patternEmail, patternPassword} from 'components/common/login';
+import {SignInType} from 'types/login';
+import {signIn} from 'redux/store/actionCreator/actionCreatorLogin';
+
+export const storage = new MMKV();
 
 interface LoginProps {
   navigation?: any;
@@ -13,6 +18,7 @@ interface LoginProps {
 
 export const Login: FC<LoginProps> = ({navigation}) => {
   const [error, setError] = useState('');
+  const {isSignIn} = useAppSelector(reducer => reducer.loginReducer);
   const {
     control,
     handleSubmit,
@@ -24,34 +30,25 @@ export const Login: FC<LoginProps> = ({navigation}) => {
     },
   });
 
-  const onSubmit = async (data: SignIn) => {
+  const dispatch = useAppDispatch();
+
+  const onSubmit = async (data: SignInType) => {
     try {
-      await auth()
-        .signInWithEmailAndPassword(data.email, data.password)
-        .then(() => {
-          if (error === '') {
-            navigation.navigate('Home');
-          } else {
-            Alert.alert('something went wrong please try again');
-          }
-        });
+      dispatch(
+        signIn({
+          email: data.email,
+          password: data.password,
+        }),
+      );
+      if (error === '' && !isSignIn) {
+        navigation.navigate('Home');
+      } else {
+        Alert.alert('Something went wrong please try again');
+      }
     } catch (er: any) {
       setError(er);
     }
   };
-
-  useEffect(() => {
-    console.log(auth().currentUser);
-    auth().currentUser && navigation.navigate('Home');
-  }, []);
-
-  // const logout = async () => {
-  //   try {
-  //     await auth().signOut();
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // };
 
   const registration = () => {
     navigation.navigate('Registration');
@@ -63,7 +60,7 @@ export const Login: FC<LoginProps> = ({navigation}) => {
         control={control}
         // rules={{
         //   required: true,
-        //   pattern: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+        //   pattern: patternEmail,
         // }}
         render={({field: {onChange, value}}) => (
           <Input onChangeText={onChange} text={value} placeholder={'Email'} />
@@ -78,7 +75,7 @@ export const Login: FC<LoginProps> = ({navigation}) => {
         //   maxLength: 12,
         //   minLength: 6,
         //   required: true,
-        //   pattern: /^(?=.*[A-Z])(?=.*[0-9])(?=.*[ -/:-@|[-`{-~]).{6,12}$/,
+        //   pattern: patternPassword,
         // }}
         render={({field: {onChange, value}}) => (
           <Input
@@ -136,88 +133,3 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-
-// import React, {FC, useCallback, useState} from 'react';
-// import {
-//   StyleSheet,
-//   View,
-//   Animated,
-//   Easing,
-//   TouchableOpacity,
-//   Text,
-// } from 'react-native';
-// import {COLORS} from '../../constants/colors';
-// import {dw} from '../../utils/dimensions';
-// // import {authentication} from '../../../firebase/firebase-config';
-// // import createUserWithEmailAndPassword from '@react-native-firebase/auth';
-
-// interface LoginProps {}
-
-// export const Login: FC<LoginProps> = ({}) => {
-//   // const registration = () => {
-//   //   createUserWithEmailAndPassword(authentication);
-//   // };
-
-//   const [isActive, setActive] = useState(false);
-
-//   const animatedValue = useState(new Animated.ValueXY({x: 0, y: 0}))[0];
-//   const moveToogle = useCallback(() => {
-//     Animated.timing(animatedValue, {
-//       toValue: isActive ? {x: 0, y: 0} : {x: -30, y: 0},
-//       useNativeDriver: false,
-//       duration: 300,
-//       easing: Easing.ease,
-//     }).start(() => {
-//       setActive(!isActive);
-//     });
-//   }, [animatedValue, isActive]);
-
-//   return (
-//     <TouchableOpacity onPress={moveToogle}>
-//       <View
-//         style={[
-//           styles.containerToogle,
-//           isActive && styles.containerToogleActive,
-//         ]}
-//       />
-//       <Animated.View style={animatedValue.getLayout()}>
-//         <View style={styles.containerCircle}>
-//           <View style={[styles.circle, isActive && styles.circleActive]} />
-//         </View>
-//       </Animated.View>
-//     </TouchableOpacity>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   containerToogle: {
-//     width: dw(50),
-//     height: dw(20),
-//     borderRadius: dw(50),
-//     backgroundColor: COLORS.GHOST,
-//     opacity: 1,
-//   },
-//   containerToogleActive: {
-//     // backgroundColor: COLORS.APPLE,
-//   },
-//   containerCircle: {
-//     bottom: dw(32),
-//     left: dw(28),
-//   },
-//   circle: {
-//     width: dw(22),
-//     height: dw(22),
-//     borderRadius: dw(22),
-//     borderWidth: dw(3),
-//     borderColor: COLORS.ALUMINIUM,
-//     marginTop: dw(10),
-//   },
-//   circleActive: {
-//     borderWidth: dw(8),
-//     borderColor: COLORS.APPLE,
-//   },
-//   text: {
-//     color: COLORS.BLACK,
-//     fontSize: 16,
-//   },
-// });

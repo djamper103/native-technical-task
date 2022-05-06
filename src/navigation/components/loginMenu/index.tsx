@@ -1,8 +1,9 @@
 import React, {FC} from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {signOut} from 'redux/store/actionCreator/actionCreatorLogin';
 import {COLORS} from '../../../constants/colors';
 import {SIGN_IN_ICON, SIGN_OUT_ICON} from '../../../constants/images';
-import {useAppSelector} from '../../../hooks/redux';
+import {useAppDispatch, useAppSelector} from '../../../hooks/redux';
 import {dh, dw} from '../../../utils/dimensions';
 
 interface LoginMenuProps {
@@ -10,22 +11,28 @@ interface LoginMenuProps {
 }
 
 export const LoginMenu: FC<LoginMenuProps> = ({navigation}) => {
-  const {signIn} = useAppSelector(reducer => reducer.loginReducer);
+  const {isSignIn} = useAppSelector(reducer => reducer.loginReducer);
   const {isTheme} = useAppSelector(reducer => reducer.themeReducer);
 
+  const dispatch = useAppDispatch();
+
   const onPress = () => {
-    navigation.navigate('Login');
+    if (isSignIn) {
+      dispatch(signOut());
+    } else {
+      navigation.navigate('Login');
+    }
   };
 
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={onPress} style={styles.containerMain}>
         <Image
-          source={signIn ? SIGN_OUT_ICON : SIGN_IN_ICON}
+          source={isSignIn ? SIGN_OUT_ICON : SIGN_IN_ICON}
           style={styles.image}
         />
         <Text style={[styles.text, isTheme && styles.textActive]}>
-          {signIn ? 'Sign out' : 'Sign in'}
+          {isSignIn ? 'Sign out' : 'Sign in'}
         </Text>
       </TouchableOpacity>
     </View>
@@ -45,7 +52,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: COLORS.BLACK,
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '500',
   },
   textActive: {

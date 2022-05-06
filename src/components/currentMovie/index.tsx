@@ -1,13 +1,16 @@
 import React, {FC, useEffect, useState} from 'react';
 import {FlatList, ScrollView, StyleSheet, Text, View} from 'react-native';
-import {COLORS} from '../../constants/colors';
-import {useAppDispatch, useAppSelector} from '../../hooks/redux';
+import {
+  fetchMoreDetails,
+  fetchVideo,
+} from 'redux/store/actionCreator/actionCreator';
 import {
   addFavorite,
   deleteFavorite,
-  fetchMoreDetails,
-  fetchVideo,
-} from '../../redux/store/reducers/actionCreator';
+} from 'redux/store/actionCreator/actionCreatorFavorite';
+import {COLORS} from '../../constants/colors';
+import {useAppDispatch, useAppSelector} from '../../hooks/redux';
+
 import {CastItemType, CastPhotoType} from '../../types/cast';
 import {MovieData} from '../../types/movieData';
 import {dh, dw} from '../../utils/dimensions';

@@ -1,6 +1,6 @@
 import React, {FC} from 'react';
+import {fetchTrending} from 'redux/store/actionCreator/actionCreator';
 import {useAppSelector} from '../../hooks/redux';
-import {fetchTrending} from '../../redux/store/reducers/actionCreator';
 import {RenderPage} from '../renderPage';
 
 interface HomePageProps {

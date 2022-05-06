@@ -1,5 +1,5 @@
-import {fetchVideo} from './actionCreator';
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {fetchVideo} from '../actionCreator/actionCreator';
 
 interface VideoState {
   videoUrl: string;

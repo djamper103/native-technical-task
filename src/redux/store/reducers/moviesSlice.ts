@@ -1,6 +1,6 @@
-import {fetchMovies} from './actionCreator';
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {MovieData} from '../../../types/movieData';
+import {fetchMovies} from '../actionCreator/actionCreator';
 
 interface MoviesState {
   moviesState: MovieData[];

@@ -12,7 +12,6 @@ interface CastPhotoProps {
 }
 
 export const CastPhoto: FC<CastPhotoProps> = ({data, isTheme}) => {
-  console.log(data);
   return (
     <View style={styles.container}>
       <Image

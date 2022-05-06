@@ -6,7 +6,7 @@ import {CustomDrawer} from './customDrawer/index';
 import {COLORS} from '../../constants/colors';
 import {useAppDispatch, useAppSelector} from '../../hooks/redux';
 import {dw} from '../../utils/dimensions';
-import {setFavorite} from '../../redux/store/reducers/actionCreator';
+import {setFavorite} from 'redux/store/actionCreator/actionCreatorFavorite';
 
 const Drawer = createDrawerNavigator();
 
@@ -28,9 +28,10 @@ export const DrawerScreen: FC = () => {
         drawerInactiveTintColor: isTheme ? COLORS.WHITE : COLORS.BLACK,
         drawerStyle: {
           backgroundColor: isTheme ? COLORS.OXFORD_BLUE : COLORS.WHITE,
+          width: dw(280),
         },
         drawerLabelStyle: {
-          fontSize: 16,
+          fontSize: 18,
         },
         headerTitleStyle: {
           fontSize: 24,

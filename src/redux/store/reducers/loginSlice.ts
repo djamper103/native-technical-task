@@ -1,19 +1,35 @@
 import {createSlice} from '@reduxjs/toolkit';
 
-interface LoginState {
-  signIn: boolean;
+interface UserState {
+  userName: string;
+  imageUrl: string;
+  isSignIn: boolean;
 }
 
-const initialState: LoginState = {
-  signIn: false,
+const initialState: UserState = {
+  userName: '',
+  imageUrl: '',
+  isSignIn: false,
 };
 
 export const LoginSlice = createSlice({
-  name: 'singIn',
+  name: 'login',
   initialState: initialState,
   reducers: {
-    signIn(state) {
-      state.signIn = !state.signIn;
+    signIn(state, action) {
+      state.imageUrl = action.payload.imageUrl;
+      state.userName = action.payload.name;
+      state.isSignIn = true;
+    },
+    signOut(state) {
+      state.userName = '';
+      state.imageUrl = '';
+      state.isSignIn = false;
+    },
+    isSignIn(state, action) {
+      state.userName = action.payload.name;
+      state.imageUrl = action.payload.imageUrl;
+      state.isSignIn = true;
     },
   },
 });

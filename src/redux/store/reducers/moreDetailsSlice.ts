@@ -1,5 +1,5 @@
-import {fetchMoreDetails} from './actionCreator';
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {fetchMoreDetails} from '../actionCreator/actionCreator';
 
 interface MoreDetailsState {
   detailsData: [];

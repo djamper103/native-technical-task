@@ -1,44 +1,30 @@
 import React, {FC} from 'react';
-import {
-  Image,
-  ImageSourcePropType,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {COLORS} from '../../../constants/colors';
 import {
   DARK_THEME_ICON,
   DEFAULT_PERSON_ICON,
   LIGHT_THEME_ICON,
 } from '../../../constants/images';
-import {useAppDispatch, useAppSelector} from '../../../hooks/redux';
-import {setTheme} from '../../../redux/store/reducers/actionCreator';
 import {dh, dw} from '../../../utils/dimensions';
 
 interface UserProfileProps {
-  userIcon?: ImageSourcePropType;
-
   userName?: string;
   navigation?: any;
+  isTheme?: boolean;
+  imageUrl?: string;
+  onPressTheme: () => void;
 }
 
 export const UserProfile: FC<UserProfileProps> = ({
-  userIcon,
   userName,
   navigation,
+  isTheme,
+  imageUrl,
+  onPressTheme,
 }) => {
-  const {isTheme} = useAppSelector(reducer => reducer.themeReducer);
-
-  const dispatch = useAppDispatch();
-
   const onPressPhoto = () => {
     navigation.navigate('Profile Page');
-  };
-
-  const onPressTheme = () => {
-    dispatch(setTheme());
   };
 
   return (
@@ -46,11 +32,11 @@ export const UserProfile: FC<UserProfileProps> = ({
       <View style={styles.containerHeader}>
         <TouchableOpacity onPress={onPressPhoto}>
           <Image
-            source={userIcon ? userIcon : DEFAULT_PERSON_ICON}
-            style={styles.image}
+            source={imageUrl !== '' ? {uri: imageUrl} : DEFAULT_PERSON_ICON}
+            style={imageUrl !== '' ? styles.imageUser : styles.image}
           />
         </TouchableOpacity>
-        <TouchableOpacity onPress={onPressTheme}>
+        <TouchableOpacity onPress={onPressTheme} style={styles.containerImage}>
           <Image
             source={isTheme ? DARK_THEME_ICON : LIGHT_THEME_ICON}
             style={styles.image}
@@ -80,6 +66,15 @@ const styles = StyleSheet.create({
   },
   containerFooter: {
     flexDirection: 'row',
+  },
+  containerImage: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  imageUser: {
+    width: dw(50),
+    height: dw(50),
+    borderRadius: dw(50),
   },
   image: {
     resizeMode: 'contain',
