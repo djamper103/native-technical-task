@@ -14,6 +14,7 @@ export const Search: FC<SearchProps> = ({onSearch}) => {
 
   const searchItem = () => {
     onSearch(text);
+    onChangeText('');
   };
 
   return (

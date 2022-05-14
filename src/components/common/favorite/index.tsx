@@ -1,6 +1,11 @@
 import React, {FC} from 'react';
-import {Image, StyleSheet, View, ViewStyle} from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {
+  Image,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  View,
+  ViewStyle,
+} from 'react-native';
 import {COLORS} from '../../../constants/colors';
 import {FAVORITE_ICON} from '../../../constants/images';
 
@@ -17,12 +22,12 @@ export const FavoriteIcon: FC<FavoriteIconProps> = ({
 }) => {
   return (
     <View style={[styles.container, containerStyle && containerStyle]}>
-      <TouchableOpacity onPress={onPress}>
+      <TouchableWithoutFeedback onPress={onPress}>
         <Image
           style={[styles.image, isFavorite && styles.imageActive]}
           source={FAVORITE_ICON}
         />
-      </TouchableOpacity>
+      </TouchableWithoutFeedback>
     </View>
   );
 };

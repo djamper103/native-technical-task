@@ -1,11 +1,13 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import axios from 'axios';
-import {appKey} from '../../../constants/common';
+import {appKey, storageLocal} from '../../../constants/common';
 import {AppDispatch} from '../store';
 import {GenresSlice} from '../reducers/genresSlice';
 import {PagesSlice} from '../reducers/pagesSlice';
 import {SearchSlice} from '../reducers/searchSlice';
 import {ThemeSlice} from '../reducers/themeSlice';
+import {InternetSlice} from '../reducers/internetSlice';
+import {netInfo} from 'components/common/internet';
 
 export const fetchMovies = createAsyncThunk(
   'fetchMovies',
@@ -41,14 +43,27 @@ export const fetchGenres = createAsyncThunk(
 export const fetchTrending = createAsyncThunk(
   'trending',
   async function (
-    payload: {type: string; curentPage: number; currentGenre?: string},
+    payload: {
+      type: string;
+      curentPage: number;
+      currentGenre?: string;
+    },
     thunkAPI,
   ) {
     try {
-      const {data} = await axios.get<Object>(
-        `https://api.themoviedb.org/3/trending/${payload.type}/day?api_key=${appKey}&page=${payload.curentPage}`,
-      );
-      return data;
+      if (await netInfo()) {
+        const {data} = await axios.get<Object>(
+          `https://api.themoviedb.org/3/trending/${payload.type}/day?api_key=${appKey}&page=${payload.curentPage}`,
+        );
+        return data;
+      } else {
+        const json = storageLocal.getString('Data');
+        if (json !== undefined) {
+          return {results: JSON.parse(json)};
+        } else {
+          return {results: []};
+        }
+      }
     } catch (e: any) {
       return thunkAPI.rejectWithValue(e.message);
     }
@@ -126,4 +141,8 @@ export const nullSearchText = () => (dispatch: AppDispatch) => {
 
 export const setTheme = () => (dispatch: AppDispatch) => {
   dispatch(ThemeSlice.actions.setTheme());
+};
+
+export const setIsNet = () => (dispatch: AppDispatch) => {
+  netInfo().then(el => dispatch(InternetSlice.actions.setIsNet(el)));
 };

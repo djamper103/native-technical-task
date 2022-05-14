@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.WHITE,
     alignItems: 'center',
-    marginTop: dw(200),
+    justifyContent: 'center',
   },
   containerActive: {
     backgroundColor: COLORS.OXFORD_BLUE,

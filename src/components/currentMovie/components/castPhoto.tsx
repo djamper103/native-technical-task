@@ -4,7 +4,7 @@ import {COLORS} from '../../../constants/colors';
 import {imagePath} from '../../../constants/common';
 import {NO_PICTURE_ICON} from '../../../constants/images';
 import {CastPhotoType} from '../../../types/cast';
-import {dh, dw} from '../../../utils/dimensions';
+import {dw} from '../../../utils/dimensions';
 
 interface CastPhotoProps {
   data: CastPhotoType;
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   image: {
     resizeMode: 'contain',
     width: dw(150),
-    height: dh(200),
+    height: dw(200),
     borderRadius: dw(10),
   },
   containerText: {

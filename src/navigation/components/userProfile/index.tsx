@@ -72,8 +72,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   imageUser: {
-    width: dw(50),
-    height: dw(50),
+    width: dw(60),
+    height: dw(60),
     borderRadius: dw(50),
   },
   image: {

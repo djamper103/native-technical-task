@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useCallback, useEffect, useState} from 'react';
 import {HomePageList} from './components/flatList';
 import {useAppDispatch, useAppSelector} from '../../hooks/redux';
 import {MovieData} from '../../types/movieData';
@@ -12,6 +12,7 @@ import {
   fetchSearch,
   incrementPage,
   setCurrentPage,
+  setIsNet,
   setSearchText,
 } from 'redux/store/actionCreator/actionCreator';
 import {
@@ -33,7 +34,6 @@ interface RenderPageProps {
 export const RenderPage: FC<RenderPageProps> = ({
   navigation,
   type,
-  renderState,
   renderAllPage,
   currentFetch,
   genreType,
@@ -57,9 +57,25 @@ export const RenderPage: FC<RenderPageProps> = ({
 
   const {favoriteState} = useAppSelector(reducer => reducer.favoriteReducer);
 
+  const uploadData = useCallback(() => {
+    dispatch(
+      currentFetch({
+        type: type,
+        curentPage: currentPage,
+        currentGenre: genreType,
+      }),
+    ).then((el: any) => {
+      setAllPageCurrent(el.payload.total_pages);
+      setState(el.payload.results);
+    });
+    dispatch(setIsNet());
+  }, [currentFetch, currentPage, dispatch, genreType, type]);
+
   useEffect(() => {
-    setError('Enter valid text to search');
-    setIsLoading(searchIsLoading);
+    if (searchError) {
+      setError('Enter valid text to search');
+      setIsLoading(searchIsLoading);
+    }
   }, [searchError, searchIsLoading]);
 
   useEffect(() => {
@@ -69,27 +85,9 @@ export const RenderPage: FC<RenderPageProps> = ({
 
   useEffect(() => {
     if (state?.length === 0) {
-      dispatch(
-        currentFetch({
-          type: type,
-          curentPage: currentPage,
-          currentGenre: genreType,
-        }),
-      ).then((el: any) => {
-        setAllPageCurrent(el.payload.total_pages);
-        setState(el.payload.results);
-      });
+      uploadData();
     }
-  }, [
-    renderAllPage,
-    currentPage,
-    dispatch,
-    state?.length,
-    renderState,
-    type,
-    currentFetch,
-    genreType,
-  ]);
+  }, [state?.length, uploadData]);
 
   const nextPage = () => {
     if (searchText === '') {
@@ -194,7 +192,6 @@ export const RenderPage: FC<RenderPageProps> = ({
         setAllPageCurrent(el.payload.total_pages);
         setState(el.payload.results);
         dispatch(setCurrentPage(1));
-        console.log(error);
       });
     }
   };
@@ -223,16 +220,23 @@ export const RenderPage: FC<RenderPageProps> = ({
             currentPage={currentPage}
             allPageCurrent={allPageCurrent}
             type={type}
+            isTheme={isTheme}
             onSearch={onSearch}
             nextPage={nextPage}
             prevPage={prevPage}
             installationCurrentPage={installationCurrentPage}
             checkFavorite={checkFavorite}
             onPressFavorite={onPressFavorite}
+            uploadData={uploadData}
           />
         )
       ) : (
-        <ErrorContainer isTheme={isTheme} text={error} />
+        <ErrorContainer
+          isTheme={isTheme}
+          text={error}
+          isButton={true}
+          onPress={uploadData}
+        />
       )}
     </View>
   );
@@ -242,6 +246,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: COLORS.WHITE,
     flex: 1,
+    // paddingHorizontal: dw(2),
   },
   containerActive: {
     backgroundColor: COLORS.OXFORD_BLUE,

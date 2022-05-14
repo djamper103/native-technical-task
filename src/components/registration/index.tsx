@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {Text, View, StyleSheet, Pressable, Alert, Platform} from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
 import {Input} from 'components/input';
@@ -8,14 +8,13 @@ import {RegisrationType} from 'types/login';
 import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
 import {patternEmail, patternPassword} from 'components/common/login';
 import {registration} from 'redux/store/actionCreator/actionCreatorLogin';
-import {useAppSelector} from 'hooks/redux';
+import {useAppDispatch, useAppSelector} from 'hooks/redux';
 
 interface Registrationrops {
   navigation?: any;
 }
 
 export const Registration: FC<Registrationrops> = ({navigation}) => {
-  const [error, setError] = useState('');
   const [uploadUri, setUploadUri] = useState('');
   const {
     control,
@@ -31,62 +30,64 @@ export const Registration: FC<Registrationrops> = ({navigation}) => {
   const {isRegistration} = useAppSelector(
     reducer => reducer.registrationReducer,
   );
+  const {registrationError} = useAppSelector(
+    reducer => reducer.registrationReducer,
+  );
+
+  const dispatch = useAppDispatch();
+
   const onSubmit = async (data: RegisrationType) => {
     try {
-      registration({
-        email: data.email,
-        password: data.password,
-        uploadUri: uploadUri,
-        name: data.name,
-      });
-      if (error === '' && isRegistration) {
-        navigation.navigate('Login');
-      } else {
-        Alert.alert('Something went wrong please try again');
+      if (uploadUri !== '') {
+        dispatch(
+          registration({
+            email: data.email,
+            password: data.password,
+            uploadUri: uploadUri,
+            name: data.name,
+          }),
+        );
+        if (registrationError !== '' && !isRegistration) {
+          Alert.alert(`${registrationError}`);
+        }
       }
     } catch (er: any) {
-      setError(er);
+      Alert.alert(`${er}`);
     }
   };
 
-  const uploadImage = async () => {
-    try {
-      await launchImageLibrary(
-        {
-          mediaType: 'photo',
-        },
-        (response: any) => {
+  const uploadImage = () => {
+    upload('image');
+  };
+
+  const uploadPhoto = () => {
+    upload('photo');
+  };
+
+  useEffect(() => {
+    if (isRegistration) {
+      navigation.navigate('Login');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isRegistration]);
+
+  const upload = (type: string) => {
+    (type === 'image' ? launchImageLibrary : launchCamera)(
+      {
+        mediaType: 'photo',
+      },
+      (response: any) => {
+        if (!response?.didCancel) {
           setUploadUri(
             Platform.OS === 'ios'
               ? response.assets[0].uri.replace('file://', '')
               : response.assets[0].uri,
           );
-        },
-      );
-    } catch (er: any) {
-      Alert.alert('Something went wrong please try again');
-      setError(er);
-    }
-  };
-
-  const uploadPhoto = async () => {
-    try {
-      await launchCamera(
-        {
-          mediaType: 'photo',
-        },
-        (response: any) => {
-          setUploadUri(
-            Platform.OS === 'ios'
-              ? response.assets[0].uri.replace('file://', '')
-              : response.assets[0].uri,
-          );
-        },
-      );
-    } catch (er: any) {
-      Alert.alert('Something went wrong please try again');
-      setError(er);
-    }
+        } else {
+          Alert.alert('Something went wrong please try again');
+        }
+      },
+    );
   };
 
   return (
@@ -159,7 +160,9 @@ export const Registration: FC<Registrationrops> = ({navigation}) => {
           </Pressable>
         </View>
         <View style={styles.containerSubmit}>
-          <Pressable onPress={handleSubmit(onSubmit)} style={styles.button}>
+          <Pressable
+            onPress={handleSubmit(onSubmit)}
+            style={[styles.button, styles.buttonSubmit]}>
             <Text style={styles.buttonText}>Submit</Text>
           </Pressable>
         </View>
@@ -179,7 +182,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginBottom: dw(20),
     justifyContent: 'space-between',
-    marginHorizontal: dw(25),
+    marginHorizontal: dw(5),
   },
   containerSubmit: {
     alignItems: 'center',
@@ -191,14 +194,16 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: COLORS.STEEL_BLUE,
-    width: dw(160),
-    height: dw(60),
+    paddingHorizontal: dw(10),
+    paddingVertical: dw(10),
     borderRadius: dw(15),
-    justifyContent: 'center',
+  },
+  buttonSubmit: {
+    width: dw(170),
   },
   buttonText: {
     color: COLORS.WHITE,
-    fontSize: 24,
+    fontSize: 22,
     textAlign: 'center',
   },
 });

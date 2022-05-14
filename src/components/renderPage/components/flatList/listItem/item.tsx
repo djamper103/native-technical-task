@@ -1,7 +1,7 @@
 import React, {FC, useEffect, useState} from 'react';
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import {MovieData} from '../../../../../types/movieData';
-import {dh, dw} from '../../../../../utils/dimensions';
+import {dw} from '../../../../../utils/dimensions';
 import {imagePath} from '../../../../../constants/common';
 import {COLORS} from '../../../../../constants/colors';
 import {VoteContainer} from '../../../../common/vote';
@@ -51,7 +51,7 @@ export const ListItem: FC<ListItemProps> = ({
   };
 
   return (
-    <TouchableOpacity onPress={onPress} style={styles.container}>
+    <Pressable onPress={onPress} style={styles.container}>
       {data && (
         <View style={styles.containerMain}>
           <View>
@@ -67,12 +67,11 @@ export const ListItem: FC<ListItemProps> = ({
               vote={data.vote_average}
               containerStyle={styles.containerRating}
             />
-            <TouchableOpacity onPress={pressFavorite}>
-              <FavoriteIcon
-                containerStyle={styles.containerFavorite}
-                isFavorite={isFavorite}
-              />
-            </TouchableOpacity>
+            <FavoriteIcon
+              containerStyle={styles.containerFavorite}
+              isFavorite={isFavorite}
+              onPress={pressFavorite}
+            />
           </View>
           <View style={styles.containerMainText}>
             <View
@@ -95,7 +94,7 @@ export const ListItem: FC<ListItemProps> = ({
           </View>
         </View>
       )}
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
@@ -109,18 +108,18 @@ const styles = StyleSheet.create({
     borderRadius: dw(14),
   },
   containerRating: {
-    bottom: dh(296),
+    bottom: dw(296),
     left: dw(145),
   },
   containerFavorite: {
-    bottom: dh(290),
+    bottom: dw(290),
     left: dw(71),
   },
   containerMainText: {
     marginHorizontal: dw(10),
   },
   containerTitle: {
-    height: dh(60),
+    height: dw(75),
     bottom: dw(35),
   },
   containerTitleLong: {
@@ -129,11 +128,11 @@ const styles = StyleSheet.create({
   containerDate: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    bottom: dw(20),
+    bottom: dw(15),
   },
   image: {
     width: dw(190),
-    height: dh(300),
+    height: dw(300),
     borderRadius: dw(14),
   },
   text: {

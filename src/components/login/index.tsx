@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC, useEffect} from 'react';
 import {Text, View, StyleSheet, Pressable, Alert} from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
 import {Input} from 'components/input';
@@ -17,8 +17,9 @@ interface LoginProps {
 }
 
 export const Login: FC<LoginProps> = ({navigation}) => {
-  const [error, setError] = useState('');
   const {isSignIn} = useAppSelector(reducer => reducer.loginReducer);
+  const {errorSignIn} = useAppSelector(reducer => reducer.loginReducer);
+
   const {
     control,
     handleSubmit,
@@ -40,15 +41,20 @@ export const Login: FC<LoginProps> = ({navigation}) => {
           password: data.password,
         }),
       );
-      if (error === '' && !isSignIn) {
-        navigation.navigate('Home');
-      } else {
-        Alert.alert('Something went wrong please try again');
+      if (errorSignIn !== '' && !isSignIn) {
+        Alert.alert(`${errorSignIn}`);
       }
     } catch (er: any) {
-      setError(er);
+      Alert.alert(`${er}`);
     }
   };
+
+  useEffect(() => {
+    if (isSignIn) {
+      navigation.navigate('Home');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSignIn]);
 
   const registration = () => {
     navigation.navigate('Registration');
@@ -58,10 +64,10 @@ export const Login: FC<LoginProps> = ({navigation}) => {
     <View style={styles.container}>
       <Controller
         control={control}
-        // rules={{
-        //   required: true,
-        //   pattern: patternEmail,
-        // }}
+        rules={{
+          required: true,
+          pattern: patternEmail,
+        }}
         render={({field: {onChange, value}}) => (
           <Input onChangeText={onChange} text={value} placeholder={'Email'} />
         )}
@@ -71,12 +77,12 @@ export const Login: FC<LoginProps> = ({navigation}) => {
 
       <Controller
         control={control}
-        // rules={{
-        //   maxLength: 12,
-        //   minLength: 6,
-        //   required: true,
-        //   pattern: patternPassword,
-        // }}
+        rules={{
+          maxLength: 12,
+          minLength: 6,
+          required: true,
+          pattern: patternPassword,
+        }}
         render={({field: {onChange, value}}) => (
           <Input
             onChangeText={onChange}
@@ -121,8 +127,8 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: COLORS.STEEL_BLUE,
-    width: dw(160),
-    height: dw(60),
+    width: dw(180),
+    paddingVertical: dw(10),
     borderRadius: dw(15),
     justifyContent: 'center',
     marginBottom: dw(15),

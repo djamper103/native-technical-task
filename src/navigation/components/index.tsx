@@ -28,7 +28,7 @@ export const DrawerScreen: FC = () => {
         drawerInactiveTintColor: isTheme ? COLORS.WHITE : COLORS.BLACK,
         drawerStyle: {
           backgroundColor: isTheme ? COLORS.OXFORD_BLUE : COLORS.WHITE,
-          width: dw(280),
+          width: dw(270),
         },
         drawerLabelStyle: {
           fontSize: 18,

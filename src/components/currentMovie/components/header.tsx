@@ -4,7 +4,7 @@ import {COLORS} from '../../../constants/colors';
 import {imagePath} from '../../../constants/common';
 import {NO_PICTURE_LONG_ICON} from '../../../constants/images';
 import {MovieData} from '../../../types/movieData';
-import {dh, dw} from '../../../utils/dimensions';
+import {dw} from '../../../utils/dimensions';
 import {FavoriteIcon} from '../../common/favorite';
 import {VoteContainer} from '../../common/vote';
 
@@ -54,8 +54,8 @@ export const CurrentMovieHeader: FC<CurrentMovieHeaderProps> = ({
         />
         <FavoriteIcon
           containerStyle={styles.containerFavorite}
-          onPress={onPressFavorite}
           isFavorite={isFavorite}
+          onPress={onPressFavorite}
         />
       </View>
       <View style={styles.containerHeaderText}>
@@ -77,17 +77,18 @@ const styles = StyleSheet.create({
     bottom: dw(15),
   },
   containerVote: {
-    bottom: dh(235),
+    bottom: dw(223),
     left: dw(10),
   },
   containerFavorite: {
-    bottom: dh(272),
+    bottom: dw(260),
     left: dw(180),
   },
   image: {
     resizeMode: 'contain',
     width: '100%',
-    height: dh(246),
+    height: dw(230),
+    bottom: dw(4),
   },
   text: {
     color: COLORS.BLACK,

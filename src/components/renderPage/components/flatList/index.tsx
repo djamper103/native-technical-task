@@ -1,8 +1,9 @@
+import {ErrorContainer} from 'components/common/errorContainer';
 import React, {FC} from 'react';
 import {FlatList, StyleSheet, Text, View} from 'react-native';
 import {COLORS} from '../../../../constants/colors';
 import {MovieData} from '../../../../types/movieData';
-import {dh} from '../../../../utils/dimensions';
+import {dh, dw} from '../../../../utils/dimensions';
 import {Pagination} from '../../../pagination';
 import {Search} from '../../../search';
 import {ListItem} from './listItem/item';
@@ -15,12 +16,14 @@ interface HomePageListProps {
   type?: any;
   error?: string;
   pageType?: string;
+  isTheme?: boolean;
   onSearch: (value: string) => void;
   prevPage: () => void;
   nextPage: () => void;
   installationCurrentPage: (value: any) => void;
   checkFavorite: (value: MovieData) => void;
   onPressFavorite: (value: MovieData) => void;
+  uploadData?: () => void;
 }
 
 export const HomePageList: FC<HomePageListProps> = ({
@@ -31,12 +34,14 @@ export const HomePageList: FC<HomePageListProps> = ({
   type,
   error,
   pageType,
+  isTheme,
   onSearch,
   prevPage,
   nextPage,
   installationCurrentPage,
   checkFavorite,
   onPressFavorite,
+  uploadData,
 }) => {
   const renderItem: any = ({item}: {item: MovieData}) => {
     return (
@@ -67,16 +72,26 @@ export const HomePageList: FC<HomePageListProps> = ({
           showsVerticalScrollIndicator={false}
           numColumns={2}
           ListHeaderComponent={
-            pageType === 'favorite' ? null : <Search onSearch={onSearch} />
+            pageType === 'favorite' ? null : allPageCurrent ? (
+              <Search onSearch={onSearch} />
+            ) : null
           }
           ListFooterComponent={
-            pageType === 'favorite' ? null : (
+            pageType === 'favorite' ? null : allPageCurrent ? (
               <Pagination
                 page={currentPage}
                 allPages={allPageCurrent}
                 onLeftPress={prevPage}
                 onRightPress={nextPage}
                 onPressItem={installationCurrentPage}
+              />
+            ) : (
+              <ErrorContainer
+                isButton={true}
+                onPress={uploadData}
+                text={'No internet connection'}
+                isTheme={isTheme}
+                containerStyle={styles.containerStyle}
               />
             )
           }
@@ -90,6 +105,9 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     marginTop: dh(10),
+  },
+  containerStyle: {
+    marginVertical: dw(15),
   },
   text: {
     fontSize: 24,

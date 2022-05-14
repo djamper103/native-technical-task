@@ -23,23 +23,22 @@ export const TrendingSlice = createSlice({
   reducers: {},
   extraReducers: {
     [fetchTrending.fulfilled.type]: (state, action) => {
-      state.isLoading = false;
-      state.error = '';
-      state.trendingState = action.payload.results;
-      storageLocal.set('Data', JSON.stringify(action.payload.results));
+      if (action.payload.results.length > 0) {
+        state.error = '';
+        state.trendingState = action.payload.results;
+        storageLocal.set('Data', JSON.stringify(action.payload.results));
+        state.isLoading = false;
+      } else {
+        state.error = 'No internet connection';
+        state.isLoading = false;
+      }
     },
     [fetchTrending.pending.type]: state => {
       state.isLoading = true;
     },
     [fetchTrending.rejected.type]: (state, action: PayloadAction<string>) => {
       state.isLoading = false;
-      const json = storageLocal.getString('Data');
-      if (json !== undefined) {
-        const userObject = JSON.parse(json);
-        state.trendingState = userObject;
-      } else {
-        state.error = action.payload;
-      }
+      state.error = action.payload;
     },
   },
 });

@@ -3,12 +3,14 @@ import {createSlice} from '@reduxjs/toolkit';
 interface UserState {
   userName: string;
   imageUrl: string;
+  errorSignIn?: string;
   isSignIn: boolean;
 }
 
 const initialState: UserState = {
   userName: '',
   imageUrl: '',
+  errorSignIn: '',
   isSignIn: false,
 };
 
@@ -17,9 +19,13 @@ export const LoginSlice = createSlice({
   initialState: initialState,
   reducers: {
     signIn(state, action) {
-      state.imageUrl = action.payload.imageUrl;
-      state.userName = action.payload.name;
-      state.isSignIn = true;
+      if (action.payload.error === '') {
+        state.imageUrl = action.payload.imageUrl;
+        state.userName = action.payload.name;
+        state.isSignIn = true;
+      } else {
+        state.errorSignIn = action.payload.error;
+      }
     },
     signOut(state) {
       state.userName = '';
@@ -27,9 +33,13 @@ export const LoginSlice = createSlice({
       state.isSignIn = false;
     },
     isSignIn(state, action) {
-      state.userName = action.payload.name;
-      state.imageUrl = action.payload.imageUrl;
-      state.isSignIn = true;
+      if (action.payload.error === '') {
+        state.userName = action.payload.name;
+        state.imageUrl = action.payload.imageUrl;
+        state.isSignIn = true;
+      } else {
+        state.errorSignIn = action.payload.error;
+      }
     },
   },
 });

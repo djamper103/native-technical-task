@@ -10,6 +10,7 @@ import {DrawerScreen} from './components/index';
 import {routesStack} from './routes';
 import auth from '@react-native-firebase/auth';
 import {isSignIn} from 'redux/store/actionCreator/actionCreatorLogin';
+import {setIsNet} from 'redux/store/actionCreator/actionCreator';
 
 export const NavigationContainerFC: FC = () => {
   const Stack = createStackNavigator();
@@ -18,7 +19,14 @@ export const NavigationContainerFC: FC = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    auth().currentUser !== null && dispatch(isSignIn());
+    if (auth().currentUser !== null) {
+      dispatch(setIsNet());
+      dispatch(isSignIn());
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(setIsNet());
   }, [dispatch]);
 
   return (

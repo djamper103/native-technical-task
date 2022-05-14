@@ -43,7 +43,7 @@ export const Pagination: FC<PaginationProps> = ({
     setTimeout(() => {
       ref.current?.scrollToIndex({
         animated: true,
-        index: page - 1,
+        index: page,
         viewOffset: 1,
         viewPosition: 1,
       });
@@ -55,7 +55,7 @@ export const Pagination: FC<PaginationProps> = ({
       setTimeout(() => {
         ref.current?.scrollToIndex({
           animated: true,
-          index: page - 1,
+          index: page,
           viewOffset: 10,
           viewPosition: 1,
         });
@@ -95,9 +95,6 @@ const styles = StyleSheet.create({
     margin: dw(10),
     flexDirection: 'row',
     justifyContent: 'space-between',
-    // borderRadius: dw(10),
-    // borderWidth: dw(0.2),
-    // borderColor: COLORS.ALUMINIUM,
     padding: dw(10),
   },
   containerButton: {

@@ -73,15 +73,17 @@ export const CurrentMovie: FC = (props: any) => {
   };
 
   return (
-    <ScrollView style={[styles.container, isTheme && styles.containerActive]}>
+    <ScrollView
+      style={[styles.container, isTheme && styles.containerActive]}
+      showsVerticalScrollIndicator={false}>
       {state ? (
         <View>
           <CurrentMovieHeader
             state={state}
             type={type}
             isTheme={isTheme}
-            pressFavorite={pressFavorite}
             isFavorite={isFavorite}
+            pressFavorite={pressFavorite}
           />
           <View>
             <FlatList<CastPhotoType>
@@ -123,6 +125,7 @@ const styles = StyleSheet.create({
   },
   containerOverview: {
     margin: dw(10),
+    marginTop: dw(20),
     // marginHorizontal: dw(10),
     // marginBottom: dw(10),
   },

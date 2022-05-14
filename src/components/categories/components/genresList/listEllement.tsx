@@ -3,7 +3,7 @@ import {StyleSheet, Text} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {COLORS} from '../../../../constants/colors';
 import {GenresType} from '../../../../types/genres';
-import {dh, dw} from '../../../../utils/dimensions';
+import {dw} from '../../../../utils/dimensions';
 
 interface ListEllementProps {
   state: GenresType;
@@ -39,7 +39,8 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: COLORS.CLOUD_BURST,
     width: dw(180),
-    height: dh(70),
+    paddingVertical: dw(18),
+    paddingHorizontal: dw(5),
     borderRadius: dw(15),
     justifyContent: 'center',
     margin: dw(5),
@@ -49,13 +50,13 @@ const styles = StyleSheet.create({
   },
   text: {
     color: COLORS.WHITE,
-    fontSize: 24,
+    fontSize: 22,
     textAlign: 'center',
   },
   textActive: {
     color: COLORS.BLACK,
   },
   textLong: {
-    fontSize: 19,
+    fontSize: 18,
   },
 });

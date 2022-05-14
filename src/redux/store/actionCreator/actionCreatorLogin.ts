@@ -5,11 +5,12 @@ import storage from '@react-native-firebase/storage';
 import {storageLocal} from '../../../constants/common';
 import {AppDispatch} from '../store';
 import {LoginSlice} from '../reducers/loginSlice';
+import {RegistrationSlice} from '../reducers/registration';
 
 export const signIn = (item: SignInType) => (dispatch: AppDispatch) => {
   auth()
     .signInWithEmailAndPassword(item.email, item.password)
-    .then(() => {
+    .then(async () => {
       return firestore()
         .collection('Users')
         .doc(`${auth().currentUser?.uid}`)
@@ -19,33 +20,45 @@ export const signIn = (item: SignInType) => (dispatch: AppDispatch) => {
             return documentSnapshot.data();
           }
         })
-        .then((el: any) => {
+        .then(async (el: any) => {
           return storage()
             .ref(`${auth().currentUser?.uid}`)
             .getDownloadURL()
             .then((snapshot: any) => {
               dispatch(
-                LoginSlice.actions.signIn({name: el.name, imageUrl: snapshot}),
+                LoginSlice.actions.signIn({
+                  name: el.name,
+                  imageUrl: snapshot,
+                  error: '',
+                }),
+              );
+              storageLocal.set(
+                'login',
+                JSON.stringify({
+                  email: item.email,
+                  password: item.password,
+                }),
               );
             });
         });
+    })
+    .catch(error => {
+      dispatch(
+        LoginSlice.actions.signIn({name: '', imageUrl: '', error: error}),
+      );
     });
-  storageLocal.set(
-    'login',
-    JSON.stringify({
-      email: item.email,
-      password: item.password,
-    }),
-  );
 };
 
 export const signOut = () => (dispatch: AppDispatch) => {
-  auth().signOut();
-  const json = storageLocal.getString('login');
-  if (json !== undefined) {
-    storageLocal.delete('login');
-    dispatch(LoginSlice.actions.signOut());
-  }
+  auth()
+    .signOut()
+    .then(() => {
+      const json = storageLocal.getString('login');
+      if (json !== undefined) {
+        storageLocal.delete('login');
+        dispatch(LoginSlice.actions.signOut());
+      }
+    });
 };
 
 export const isSignIn = () => (dispatch: AppDispatch) => {
@@ -54,7 +67,7 @@ export const isSignIn = () => (dispatch: AppDispatch) => {
     const userObject = JSON.parse(json);
     auth()
       .signInWithEmailAndPassword(userObject.email, userObject.password)
-      .then(() => {
+      .then(async () => {
         return firestore()
           .collection('Users')
           .doc(auth().currentUser?.uid)
@@ -71,9 +84,18 @@ export const isSignIn = () => (dispatch: AppDispatch) => {
           .getDownloadURL()
           .then((snapshot: any) => {
             dispatch(
-              LoginSlice.actions.isSignIn({name: el.name, imageUrl: snapshot}),
+              LoginSlice.actions.isSignIn({
+                name: el.name,
+                imageUrl: snapshot,
+                error: '',
+              }),
             );
           });
+      })
+      .catch(error => {
+        dispatch(
+          LoginSlice.actions.isSignIn({name: '', imageUrl: '', error: error}),
+        );
       });
   }
 };
@@ -85,10 +107,10 @@ export const registration =
     uploadUri: string;
     name: string;
   }) =>
-  () => {
+  (dispatch: AppDispatch) => {
     auth()
       .createUserWithEmailAndPassword(payload.email, payload.password)
-      .then(() => {
+      .then(async () => {
         firestore()
           .collection('Users')
           .doc(auth().currentUser?.uid)
@@ -96,9 +118,15 @@ export const registration =
             name: payload.name,
           })
           .then(async () => {
-            storage()
+            await storage()
               .ref(`${auth().currentUser?.uid}`)
               .putFile(payload.uploadUri);
+          })
+          .then(() => {
+            dispatch(RegistrationSlice.actions.setRegistration(''));
           });
-      });
+      })
+      .catch(error =>
+        dispatch(RegistrationSlice.actions.setRegistration(error)),
+      );
   };
