@@ -87,7 +87,6 @@ export const HomePageList: FC<HomePageListProps> = ({
               />
             ) : (
               <ErrorContainer
-                isButton={true}
                 onPress={uploadData}
                 text={'No internet connection'}
                 isTheme={isTheme}

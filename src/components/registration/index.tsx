@@ -1,14 +1,17 @@
 import React, {FC, useEffect, useState} from 'react';
-import {Text, View, StyleSheet, Pressable, Alert, Platform} from 'react-native';
+import {Text, View, StyleSheet, Pressable, Alert} from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
 import {Input} from 'components/input';
 import {COLORS} from 'constants/colors';
 import {dw} from 'utils/dimensions';
 import {RegisrationType} from 'types/login';
-import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
 import {patternEmail, patternPassword} from 'components/common/login';
-import {registration} from 'redux/store/actionCreator/actionCreatorLogin';
+import {
+  deleteRegistrationError,
+  registration,
+} from 'redux/store/actionCreator/actionCreatorLogin';
 import {useAppDispatch, useAppSelector} from 'hooks/redux';
+import {uploadPhoto} from 'components/common/functions/uploadPhoto';
 
 interface Registrationrops {
   navigation?: any;
@@ -37,6 +40,7 @@ export const Registration: FC<Registrationrops> = ({navigation}) => {
   const dispatch = useAppDispatch();
 
   const onSubmit = async (data: RegisrationType) => {
+    dispatch(deleteRegistrationError());
     try {
       if (uploadUri !== '') {
         dispatch(
@@ -52,16 +56,16 @@ export const Registration: FC<Registrationrops> = ({navigation}) => {
         }
       }
     } catch (er: any) {
-      Alert.alert(`${er}`);
+      Alert.alert(`Something went wrong ${er}`);
     }
   };
 
-  const uploadImage = () => {
-    upload('image');
+  const setImage = () => {
+    uploadPhoto('image').then((el: any) => setUploadUri(el.assets[0].uri));
   };
 
-  const uploadPhoto = () => {
-    upload('photo');
+  const setPhoto = () => {
+    uploadPhoto('photo').then((el: any) => setUploadUri(el.assets[0].uri));
   };
 
   useEffect(() => {
@@ -70,25 +74,6 @@ export const Registration: FC<Registrationrops> = ({navigation}) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isRegistration]);
-
-  const upload = (type: string) => {
-    (type === 'image' ? launchImageLibrary : launchCamera)(
-      {
-        mediaType: 'photo',
-      },
-      (response: any) => {
-        if (!response?.didCancel) {
-          setUploadUri(
-            Platform.OS === 'ios'
-              ? response.assets[0].uri.replace('file://', '')
-              : response.assets[0].uri,
-          );
-        } else {
-          Alert.alert('Something went wrong please try again');
-        }
-      },
-    );
-  };
 
   return (
     <View style={styles.container}>
@@ -152,10 +137,10 @@ export const Registration: FC<Registrationrops> = ({navigation}) => {
       )}
       <View style={styles.containerButton}>
         <View style={styles.containerUpload}>
-          <Pressable onPress={uploadImage} style={styles.button}>
+          <Pressable onPress={setImage} style={styles.button}>
             <Text style={styles.buttonText}>Upload Image</Text>
           </Pressable>
-          <Pressable onPress={uploadPhoto} style={styles.button}>
+          <Pressable onPress={setPhoto} style={styles.button}>
             <Text style={styles.buttonText}>Upload Photo</Text>
           </Pressable>
         </View>

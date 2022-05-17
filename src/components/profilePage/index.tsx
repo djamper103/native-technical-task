@@ -1,35 +1,125 @@
-import React, {FC} from 'react';
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {ErrorContainer} from 'components/common/errorContainer';
+import {useAppDispatch, useAppSelector} from 'hooks/redux';
+import React, {FC, useEffect, useCallback, useState} from 'react';
+import {StyleSheet} from 'react-native';
+import {ScrollView} from 'react-native-gesture-handler';
+import {setIsNet} from 'redux/store/actionCreator/actionCreator';
+import {
+  changeImage,
+  changeName,
+  signOut,
+} from 'redux/store/actionCreator/actionCreatorLogin';
+import {dw} from 'utils/dimensions';
 import {COLORS} from '../../constants/colors';
-import {IN_WORK_ICON} from '../../constants/images';
-import {dh, dw} from '../../utils/dimensions';
+import {ProfilePageMainContent} from './components';
 
-interface ProfilePageProps {}
+interface ProfilePageProps {
+  navigation?: any;
+}
 
-export const ProfilePage: FC<ProfilePageProps> = ({}) => {
+export const ProfilePage: FC<ProfilePageProps> = ({navigation}) => {
+  const {imageUrl} = useAppSelector(reducer => reducer.loginReducer);
+  const {userName} = useAppSelector(reducer => reducer.loginReducer);
+  const {email} = useAppSelector(reducer => reducer.loginReducer);
+  const {date} = useAppSelector(reducer => reducer.loginReducer);
+  const {isTheme} = useAppSelector(reducer => reducer.themeReducer);
+  const {isSignIn} = useAppSelector(reducer => reducer.loginReducer);
+  const {isNet} = useAppSelector(reducer => reducer.internetReducer);
+
+  const [isChangeName, setIsChangeName] = useState(false);
+
+  const dispatch = useAppDispatch();
+
+  const logout = () => {
+    dispatch(signOut());
+  };
+
+  const setPhoto = () => {
+    dispatch(changeImage());
+  };
+
+  const setName = (text: string) => {
+    setIsChangeName(!isChangeName);
+    dispatch(changeName(text));
+  };
+
+  const goToLogin = () => {
+    navigation.navigate('Login');
+  };
+  const setNetInfo = useCallback(() => {
+    dispatch(setIsNet());
+  }, [dispatch]);
+
+  useEffect(() => {
+    setNetInfo();
+  }, [setNetInfo]);
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>In Work</Text>
-      <Image source={IN_WORK_ICON} style={styles.image} />
-    </View>
+    <ScrollView
+      contentContainerStyle={[
+        styles.container,
+        isTheme && styles.containerActive,
+        (!isSignIn || !isNet) && styles.containerLogout,
+      ]}
+      showsVerticalScrollIndicator={false}>
+      {isNet ? (
+        isSignIn ? (
+          <ProfilePageMainContent
+            imageUrl={imageUrl}
+            userName={userName}
+            email={email}
+            date={date}
+            isTheme={isTheme}
+            isChangeName={isChangeName}
+            changeName={setName}
+            changePhoto={setPhoto}
+            logout={logout}
+            setIsChangeName={setIsChangeName}
+          />
+        ) : (
+          <ErrorContainer
+            onPress={goToLogin}
+            isTheme={isTheme}
+            text={'Log into your account to see your favorites'}
+            buttonText={'Login'}
+            containerButtonStyle={styles.containerButtonStyle}
+          />
+        )
+      ) : (
+        <ErrorContainer
+          text={'No internet connection'}
+          isTheme={isTheme}
+          onPress={setNetInfo}
+        />
+      )}
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    flex: 1,
     backgroundColor: COLORS.WHITE,
-    height: '100%',
+  },
+  containerActive: {
+    backgroundColor: COLORS.OXFORD_BLUE,
+  },
+  containerLogout: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  containerText: {
+    marginTop: dw(50),
+  },
+  containerButtonStyle: {
+    marginTop: dw(20),
   },
   text: {
+    color: COLORS.BLACK,
     fontSize: 24,
-    color: COLORS.DUNE,
+    textAlign: 'center',
   },
-  image: {
-    resizeMode: 'contain',
-    width: dw(400),
-    height: dh(600),
-    backgroundColor: COLORS.TRANSPARENT,
+  textActive: {
+    color: COLORS.WHITE,
   },
+  buttonStyle: {justifyContent: 'center'},
 });

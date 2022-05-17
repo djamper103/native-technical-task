@@ -7,7 +7,7 @@ import {PagesSlice} from '../reducers/pagesSlice';
 import {SearchSlice} from '../reducers/searchSlice';
 import {ThemeSlice} from '../reducers/themeSlice';
 import {InternetSlice} from '../reducers/internetSlice';
-import {netInfo} from 'components/common/internet';
+import {netInfo} from 'components/common/functions/internet';
 
 export const fetchMovies = createAsyncThunk(
   'fetchMovies',

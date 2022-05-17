@@ -13,7 +13,6 @@ import {
   deleteFavorite,
   setFavorite,
 } from 'redux/store/actionCreator/actionCreatorFavorite';
-import {SignOut} from './components/signOut';
 import {setIsNet} from 'redux/store/actionCreator/actionCreator';
 
 interface FavoritePageProps {
@@ -47,6 +46,10 @@ export const FavoritePage: FC<FavoritePageProps> = ({navigation}) => {
     setNetInfo();
   }, [setNetInfo]);
 
+  const goToLogin = () => {
+    navigation.navigate('Login');
+  };
+
   return (
     <View style={[styles.container, isTheme && styles.containerActive]}>
       {isNet ? (
@@ -74,7 +77,13 @@ export const FavoritePage: FC<FavoritePageProps> = ({navigation}) => {
             )}
           </>
         ) : (
-          <SignOut navigation={navigation} isTheme={isTheme} />
+          <ErrorContainer
+            onPress={goToLogin}
+            isTheme={isTheme}
+            text={'Log into your account to see your favorites'}
+            buttonText={'Login'}
+            containerButtonStyle={styles.containerButtonStyle}
+          />
         )
       ) : favoriteState.length > 0 ? (
         <HomePageList
@@ -92,7 +101,6 @@ export const FavoritePage: FC<FavoritePageProps> = ({navigation}) => {
         <ErrorContainer
           text={'No internet connection'}
           isTheme={isTheme}
-          isButton={true}
           onPress={setNetInfo}
         />
       )}
@@ -110,6 +118,9 @@ const styles = StyleSheet.create({
   },
   containerActive: {
     backgroundColor: COLORS.OXFORD_BLUE,
+  },
+  containerButtonStyle: {
+    marginTop: dw(20),
   },
   text: {
     color: COLORS.BLACK,

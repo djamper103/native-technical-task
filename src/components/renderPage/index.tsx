@@ -2,9 +2,9 @@ import React, {FC, useCallback, useEffect, useState} from 'react';
 import {HomePageList} from './components/flatList';
 import {useAppDispatch, useAppSelector} from '../../hooks/redux';
 import {MovieData} from '../../types/movieData';
-import {View, ActivityIndicator, StyleSheet} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import {COLORS} from '../../constants/colors';
-import {dh, dw} from '../../utils/dimensions';
+import {dw} from '../../utils/dimensions';
 import {checkFavoriteItem} from '../common/functions/favorite';
 import {ErrorContainer} from '../common/errorContainer';
 import {
@@ -19,6 +19,7 @@ import {
   addFavorite,
   deleteFavorite,
 } from 'redux/store/actionCreator/actionCreatorFavorite';
+import {LoaderContainer} from 'components/common/loader';
 
 interface RenderPageProps {
   navigation?: any;
@@ -210,9 +211,7 @@ export const RenderPage: FC<RenderPageProps> = ({
     <View style={[styles.container, isTheme && styles.containerActive]}>
       {error === '' ? (
         isLoading ? (
-          <View style={styles.containerLoader}>
-            <ActivityIndicator size={dw(150)} color={COLORS.STEEL_BLUE} />
-          </View>
+          <LoaderContainer size={dw(150)} color={COLORS.STEEL_BLUE} />
         ) : (
           <HomePageList
             state={state && state}
@@ -231,12 +230,7 @@ export const RenderPage: FC<RenderPageProps> = ({
           />
         )
       ) : (
-        <ErrorContainer
-          isTheme={isTheme}
-          text={error}
-          isButton={true}
-          onPress={uploadData}
-        />
+        <ErrorContainer isTheme={isTheme} text={error} onPress={uploadData} />
       )}
     </View>
   );
@@ -246,12 +240,8 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: COLORS.WHITE,
     flex: 1,
-    // paddingHorizontal: dw(2),
   },
   containerActive: {
     backgroundColor: COLORS.OXFORD_BLUE,
-  },
-  containerLoader: {
-    marginTop: dh(150),
   },
 });

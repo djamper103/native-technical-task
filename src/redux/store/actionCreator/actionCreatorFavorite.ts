@@ -4,7 +4,7 @@ import {AppDispatch} from '../store';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {storageLocal} from 'constants/common';
-import {netInfo} from 'components/common/internet';
+import {netInfo} from 'components/common/functions/internet';
 
 export const addFavorite = (item: MovieData) => (dispatch: AppDispatch) => {
   dispatch(FavoriteSlice.actions.incrementFavorite(item));

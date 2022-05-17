@@ -12,10 +12,11 @@ interface CategoriesProps {
 }
 
 export const Categories: FC<CategoriesProps> = ({navigation}) => {
+  const dispatch = useAppDispatch();
+
   const {isTheme} = useAppSelector(reducer => reducer.themeReducer);
   const {isNet} = useAppSelector(reducer => reducer.internetReducer);
 
-  const dispatch = useAppDispatch();
   const onPressMV = () => {
     dispatch(fetchGenres('movie'));
     navigation.navigate('Genres', {type: 'movie'});
@@ -50,7 +51,6 @@ export const Categories: FC<CategoriesProps> = ({navigation}) => {
         <ErrorContainer
           text={'No internet connection'}
           isTheme={isTheme}
-          isButton={true}
           onPress={setNetInfo}
         />
       )}

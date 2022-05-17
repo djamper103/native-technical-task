@@ -8,7 +8,10 @@ import {MMKV} from 'react-native-mmkv';
 import {useAppDispatch, useAppSelector} from 'hooks/redux';
 import {patternEmail, patternPassword} from 'components/common/login';
 import {SignInType} from 'types/login';
-import {signIn} from 'redux/store/actionCreator/actionCreatorLogin';
+import {
+  deleteLoginError,
+  signIn,
+} from 'redux/store/actionCreator/actionCreatorLogin';
 
 export const storage = new MMKV();
 
@@ -34,6 +37,7 @@ export const Login: FC<LoginProps> = ({navigation}) => {
   const dispatch = useAppDispatch();
 
   const onSubmit = async (data: SignInType) => {
+    dispatch(deleteLoginError());
     try {
       dispatch(
         signIn({
@@ -45,7 +49,7 @@ export const Login: FC<LoginProps> = ({navigation}) => {
         Alert.alert(`${errorSignIn}`);
       }
     } catch (er: any) {
-      Alert.alert(`${er}`);
+      Alert.alert(`Something went wrong ${er}`);
     }
   };
 

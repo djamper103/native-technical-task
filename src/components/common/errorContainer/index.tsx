@@ -1,12 +1,12 @@
 import React, {FC} from 'react';
-import {Pressable, StyleSheet, Text, View, ViewStyle} from 'react-native';
+import {StyleSheet, Text, View, ViewStyle} from 'react-native';
 import {COLORS} from '../../../constants/colors';
-import {dw} from '../../../utils/dimensions';
+import {ButtonContainer} from '../button';
 
 interface ErrorContainerProps {
   text?: string;
+  buttonText?: string;
   isTheme?: boolean;
-  isButton?: boolean;
   containerStyle?: ViewStyle;
   containerButtonStyle?: ViewStyle;
   onPress?: () => void;
@@ -14,8 +14,8 @@ interface ErrorContainerProps {
 
 export const ErrorContainer: FC<ErrorContainerProps> = ({
   text = 'Not data yet',
+  buttonText = 'Refresh',
   isTheme,
-  isButton,
   containerStyle,
   containerButtonStyle,
   onPress,
@@ -25,12 +25,12 @@ export const ErrorContainer: FC<ErrorContainerProps> = ({
       {text && (
         <Text style={[styles.text, isTheme && styles.textActive]}>{text}</Text>
       )}
-      {isButton && (
-        <Pressable
+      {onPress && (
+        <ButtonContainer
           onPress={onPress}
-          style={[styles.button, containerButtonStyle && containerButtonStyle]}>
-          <Text style={styles.buttonText}>Refresh</Text>
-        </Pressable>
+          text={buttonText}
+          containerStyle={containerButtonStyle}
+        />
       )}
     </View>
   );
@@ -49,17 +49,5 @@ const styles = StyleSheet.create({
   },
   textActive: {
     color: COLORS.WHITE,
-  },
-  button: {
-    backgroundColor: COLORS.STEEL_BLUE,
-    width: dw(170),
-    paddingVertical: dw(10),
-    borderRadius: dw(15),
-    marginTop: dw(30),
-  },
-  buttonText: {
-    color: COLORS.WHITE,
-    fontSize: 24,
-    textAlign: 'center',
   },
 });

@@ -25,6 +25,12 @@ import NO_PICTURE_LONG from '../../assets/images/default/no_picture_long.jpg';
 
 import FAVORITE_DEFAULT from '../../assets/images/default/favorite.jpg';
 
+import CAMERA from '../../assets/images/camera/camera.png';
+import MAIL from '../../assets/images/mail/mail.png';
+import DATE from '../../assets/images/date/date.png';
+
+import PENCIL from '../../assets/images/pencil/pencil.png';
+
 export const SEARCH_ICON = SEARCH;
 export const DEFAULT_PERSON_ICON = DEFAULT_PERSON;
 
@@ -51,3 +57,9 @@ export const NO_PICTURE_ICON = NO_PICTURE;
 export const NO_PICTURE_LONG_ICON = NO_PICTURE_LONG;
 
 export const FAVORITE_DEFAULT_ICON = FAVORITE_DEFAULT;
+
+export const CAMERA_ICON = CAMERA;
+export const MAIL_ICON = MAIL;
+export const DATE_ICON = DATE;
+
+export const PENCIL_ICON = PENCIL;
