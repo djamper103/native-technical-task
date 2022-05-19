@@ -8,50 +8,54 @@ import {LoginSlice} from '../reducers/loginSlice';
 import {RegistrationSlice} from '../reducers/registration';
 import {uploadPhoto} from 'components/common/functions/uploadPhoto';
 import {Alert} from 'react-native';
+import {setFavorite} from './actionCreatorFavorite';
 
-export const signIn = (item: SignInType) => (dispatch: AppDispatch) => {
-  auth()
-    .signInWithEmailAndPassword(item.email, item.password)
-    .then(async () => {
-      return firestore()
-        .collection('Users')
-        .doc(`${auth().currentUser?.uid}`)
-        .get()
-        .then(documentSnapshot => {
-          if (documentSnapshot.exists) {
-            return documentSnapshot.data();
-          }
-        })
-        .then(async (el: any) => {
-          return storage()
-            .ref(`${auth().currentUser?.uid}`)
-            .getDownloadURL()
-            .then((snapshot: any) => {
-              dispatch(
-                LoginSlice.actions.signIn({
-                  name: el.name,
-                  imageUrl: snapshot,
-                  email: item.email,
-                  date: el.date,
-                  error: '',
-                }),
-              );
-              storageLocal.set(
-                'login',
-                JSON.stringify({
-                  email: item.email,
-                  password: item.password,
-                }),
-              );
-            });
-        });
-    })
-    .catch(error => {
-      dispatch(
-        LoginSlice.actions.signIn({name: '', imageUrl: '', error: error}),
-      );
-    });
-};
+export const signIn =
+  (payload: {item: SignInType; isLogin: boolean}) =>
+  (dispatch: AppDispatch) => {
+    auth()
+      .signInWithEmailAndPassword(payload.item.email, payload.item.password)
+      .then(async () => {
+        return firestore()
+          .collection('Users')
+          .doc(`${auth().currentUser?.uid}`)
+          .get()
+          .then(documentSnapshot => {
+            if (documentSnapshot.exists) {
+              return documentSnapshot.data();
+            }
+          })
+          .then(async (el: any) => {
+            return storage()
+              .ref(`${auth().currentUser?.uid}`)
+              .getDownloadURL()
+              .then((snapshot: any) => {
+                dispatch(
+                  LoginSlice.actions.signIn({
+                    name: el.name,
+                    imageUrl: snapshot,
+                    email: payload.item.email,
+                    date: el.date,
+                    error: '',
+                  }),
+                );
+                storageLocal.set(
+                  'login',
+                  JSON.stringify({
+                    email: payload.item.email,
+                    password: payload.item.password,
+                  }),
+                );
+                dispatch(setFavorite(payload.isLogin));
+              });
+          });
+      })
+      .catch(error => {
+        dispatch(
+          LoginSlice.actions.signIn({name: '', imageUrl: '', error: error}),
+        );
+      });
+  };
 
 export const signOut = () => (dispatch: AppDispatch) => {
   auth()
@@ -65,7 +69,7 @@ export const signOut = () => (dispatch: AppDispatch) => {
     });
 };
 
-export const isSignIn = () => (dispatch: AppDispatch) => {
+export const setSignIn = () => (dispatch: AppDispatch) => {
   const json = storageLocal.getString('login');
   if (json !== undefined) {
     const userObject = JSON.parse(json);
@@ -138,14 +142,6 @@ export const registration =
       );
   };
 
-export const deleteLoginError = () => (dispatch: AppDispatch) => {
-  dispatch(LoginSlice.actions.deleteError());
-};
-
-export const deleteRegistrationError = () => (dispatch: AppDispatch) => {
-  dispatch(RegistrationSlice.actions.deleteError());
-};
-
 export const changeName = (name: string) => async (dispatch: AppDispatch) => {
   try {
     await firestore()
@@ -178,3 +174,20 @@ export const changeImage = () => async (dispatch: AppDispatch) => {
       });
   });
 };
+
+export const resetRegistration = () => (dispatch: AppDispatch) => {
+  dispatch(RegistrationSlice.actions.resetRegistration());
+};
+
+export const resetPassword =
+  (payload: {email: string; func: () => void}) => () => {
+    auth()
+      .sendPasswordResetEmail(payload.email)
+      .then(() => {
+        payload.func();
+        Alert.alert('Password reset request sent check your email');
+      })
+      .catch(Error => {
+        Alert.alert(`${Error}`);
+      });
+  };

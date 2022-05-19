@@ -14,18 +14,28 @@ export const deleteFavorite = (item: MovieData) => (dispatch: AppDispatch) => {
   dispatch(FavoriteSlice.actions.decrementFavorite(item));
 };
 
-export const setFavorite = () => async (dispatch: AppDispatch) => {
-  if (await netInfo()) {
-    if (auth().currentUser?.uid !== undefined) {
-      firestore()
-        .collection('Favorite')
-        .doc(auth().currentUser?.uid)
-        .get()
-        .then(documentSnapshot => {
-          if (documentSnapshot.exists) {
-            let result: any = documentSnapshot.data();
-            if (result.favorite.length !== 0) {
-              dispatch(FavoriteSlice.actions.setFavoriteState(result.favorite));
+export const setFavorite =
+  (isLogin: boolean) => async (dispatch: AppDispatch) => {
+    if (await netInfo()) {
+      if (isLogin !== undefined) {
+        firestore()
+          .collection('Favorite')
+          .doc(auth().currentUser?.uid)
+          .get()
+          .then(documentSnapshot => {
+            if (documentSnapshot.exists) {
+              let result: any = documentSnapshot.data();
+              if (result.favorite.length !== 0) {
+                dispatch(
+                  FavoriteSlice.actions.setFavoriteState(result.favorite),
+                );
+              } else {
+                const json = storageLocal.getString('favorite');
+                if (json !== undefined) {
+                  const userObject = JSON.parse(json);
+                  dispatch(FavoriteSlice.actions.setFavoriteState(userObject));
+                }
+              }
             } else {
               const json = storageLocal.getString('favorite');
               if (json !== undefined) {
@@ -33,20 +43,19 @@ export const setFavorite = () => async (dispatch: AppDispatch) => {
                 dispatch(FavoriteSlice.actions.setFavoriteState(userObject));
               }
             }
-          } else {
-            const json = storageLocal.getString('favorite');
-            if (json !== undefined) {
-              const userObject = JSON.parse(json);
-              dispatch(FavoriteSlice.actions.setFavoriteState(userObject));
-            }
-          }
-        });
+          });
+      } else {
+        const json = storageLocal.getString('favorite');
+        if (json !== undefined) {
+          const userObject = JSON.parse(json);
+          dispatch(FavoriteSlice.actions.setFavoriteState(userObject));
+        }
+      }
+    } else {
+      const json = storageLocal.getString('favorite');
+      if (json !== undefined) {
+        const userObject = JSON.parse(json);
+        dispatch(FavoriteSlice.actions.setFavoriteState(userObject));
+      }
     }
-  } else {
-    const json = storageLocal.getString('favorite');
-    if (json !== undefined) {
-      const userObject = JSON.parse(json);
-      dispatch(FavoriteSlice.actions.setFavoriteState(userObject));
-    }
-  }
-};
+  };

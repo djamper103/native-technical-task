@@ -1,5 +1,4 @@
 import React, {FC, useState} from 'react';
-import {StyleSheet} from 'react-native';
 import {SEARCH_ICON} from '../../constants/images';
 import {useAppSelector} from '../../hooks/redux';
 import {Input} from '../input';
@@ -22,18 +21,9 @@ export const Search: FC<SearchProps> = ({onSearch}) => {
       placeholder="Search"
       text={text}
       rightIcon={SEARCH_ICON}
-      containerStyle={styles.container}
       isTheme={isTheme}
       onChangeText={onChangeText}
       onPressRightIcon={searchItem}
     />
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-});

@@ -31,6 +31,8 @@ import DATE from '../../assets/images/date/date.png';
 
 import PENCIL from '../../assets/images/pencil/pencil.png';
 
+import RESET_PASSWORD from '../../assets/images/reset/reset_password.png';
+
 export const SEARCH_ICON = SEARCH;
 export const DEFAULT_PERSON_ICON = DEFAULT_PERSON;
 
@@ -63,3 +65,5 @@ export const MAIL_ICON = MAIL;
 export const DATE_ICON = DATE;
 
 export const PENCIL_ICON = PENCIL;
+
+export const RESET_PASSWORD_ICON = RESET_PASSWORD;

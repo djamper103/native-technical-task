@@ -1,5 +1,5 @@
 import React, {FC, useEffect, useState} from 'react';
-import {Text, View, StyleSheet, Pressable, Alert} from 'react-native';
+import {Text, View, StyleSheet, Alert} from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
 import {Input} from 'components/input';
 import {COLORS} from 'constants/colors';
@@ -7,18 +7,26 @@ import {dw} from 'utils/dimensions';
 import {RegisrationType} from 'types/login';
 import {patternEmail, patternPassword} from 'components/common/login';
 import {
-  deleteRegistrationError,
   registration,
+  resetRegistration,
 } from 'redux/store/actionCreator/actionCreatorLogin';
 import {useAppDispatch, useAppSelector} from 'hooks/redux';
 import {uploadPhoto} from 'components/common/functions/uploadPhoto';
+import {ModalContainer} from 'components/common/modal';
+import {setValue} from 'components/common/functions/setValue';
+import {ButtonContainer} from 'components/common/button';
+import {LoaderContainer} from 'components/common/loader';
 
 interface Registrationrops {
   navigation?: any;
 }
 
 export const Registration: FC<Registrationrops> = ({navigation}) => {
+  const [isModal, setIsModal] = useState(false);
+  const [error, setError] = useState<any>('');
+
   const [uploadUri, setUploadUri] = useState('');
+
   const {
     control,
     handleSubmit,
@@ -39,26 +47,44 @@ export const Registration: FC<Registrationrops> = ({navigation}) => {
 
   const dispatch = useAppDispatch();
 
+  const setModal = () => {
+    setValue(false, setIsModal);
+  };
+
   const onSubmit = async (data: RegisrationType) => {
-    dispatch(deleteRegistrationError());
-    try {
-      if (uploadUri !== '') {
-        dispatch(
-          registration({
-            email: data.email,
-            password: data.password,
-            uploadUri: uploadUri,
-            name: data.name,
-          }),
-        );
-        if (registrationError !== '' && !isRegistration) {
-          Alert.alert(`${registrationError}`);
-        }
-      }
-    } catch (er: any) {
-      Alert.alert(`Something went wrong ${er}`);
+    setValue(true, setIsModal);
+    if (uploadUri !== '') {
+      dispatch(
+        registration({
+          email: data.email,
+          password: data.password,
+          uploadUri: uploadUri,
+          name: data.name,
+        }),
+      );
     }
   };
+
+  useEffect(() => {
+    setError(registrationError);
+  }, [registrationError]);
+
+  useEffect(() => {
+    if (error !== '' && !isRegistration) {
+      setValue(false, setIsModal);
+      Alert.alert(`${error}`);
+    }
+  }, [error, isRegistration]);
+
+  useEffect(() => {
+    setError('');
+    setValue(false, setIsModal);
+    if (isRegistration) {
+      navigation.navigate('Login');
+      dispatch(resetRegistration());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isRegistration]);
 
   const setImage = () => {
     uploadPhoto('image').then((el: any) => setUploadUri(el.assets[0].uri));
@@ -68,15 +94,13 @@ export const Registration: FC<Registrationrops> = ({navigation}) => {
     uploadPhoto('photo').then((el: any) => setUploadUri(el.assets[0].uri));
   };
 
-  useEffect(() => {
-    if (isRegistration) {
-      navigation.navigate('Login');
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isRegistration]);
-
   return (
     <View style={styles.container}>
+      {isModal && (
+        <ModalContainer onPress={setModal} isModal={isModal}>
+          <LoaderContainer />
+        </ModalContainer>
+      )}
       <Controller
         control={control}
         rules={{
@@ -135,21 +159,26 @@ export const Registration: FC<Registrationrops> = ({navigation}) => {
           Enter your name, minimum length is 2 letters
         </Text>
       )}
+
       <View style={styles.containerButton}>
         <View style={styles.containerUpload}>
-          <Pressable onPress={setImage} style={styles.button}>
-            <Text style={styles.buttonText}>Upload Image</Text>
-          </Pressable>
-          <Pressable onPress={setPhoto} style={styles.button}>
-            <Text style={styles.buttonText}>Upload Photo</Text>
-          </Pressable>
+          <ButtonContainer
+            onPress={setImage}
+            text={'Upload Image'}
+            containerStyle={styles.containerButtonImage}
+          />
+          <ButtonContainer
+            onPress={setPhoto}
+            text={'Upload Photo'}
+            containerStyle={styles.containerButton}
+          />
         </View>
         <View style={styles.containerSubmit}>
-          <Pressable
+          <ButtonContainer
             onPress={handleSubmit(onSubmit)}
-            style={[styles.button, styles.buttonSubmit]}>
-            <Text style={styles.buttonText}>Submit</Text>
-          </Pressable>
+            text={'Submit'}
+            containerStyle={styles.containerButton}
+          />
         </View>
       </View>
     </View>
@@ -163,11 +192,14 @@ const styles = StyleSheet.create({
   containerButton: {
     marginTop: dw(10),
   },
+  containerButtonImage: {
+    marginTop: dw(10),
+    marginRight: dw(10),
+  },
   containerUpload: {
     flexDirection: 'row',
     marginBottom: dw(20),
-    justifyContent: 'space-between',
-    marginHorizontal: dw(5),
+    justifyContent: 'center',
   },
   containerSubmit: {
     alignItems: 'center',

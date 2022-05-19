@@ -4,7 +4,6 @@ import {useAppDispatch, useAppSelector} from '../../hooks/redux';
 import {MovieData} from '../../types/movieData';
 import {View, StyleSheet} from 'react-native';
 import {COLORS} from '../../constants/colors';
-import {dw} from '../../utils/dimensions';
 import {checkFavoriteItem} from '../common/functions/favorite';
 import {ErrorContainer} from '../common/errorContainer';
 import {
@@ -18,6 +17,7 @@ import {
 import {
   addFavorite,
   deleteFavorite,
+  setFavorite,
 } from 'redux/store/actionCreator/actionCreatorFavorite';
 import {LoaderContainer} from 'components/common/loader';
 
@@ -57,6 +57,7 @@ export const RenderPage: FC<RenderPageProps> = ({
   const {isTheme} = useAppSelector(reducer => reducer.themeReducer);
 
   const {favoriteState} = useAppSelector(reducer => reducer.favoriteReducer);
+  const {isSignIn} = useAppSelector(reducer => reducer.loginReducer);
 
   const uploadData = useCallback(() => {
     dispatch(
@@ -71,6 +72,11 @@ export const RenderPage: FC<RenderPageProps> = ({
     });
     dispatch(setIsNet());
   }, [currentFetch, currentPage, dispatch, genreType, type]);
+
+  useEffect(() => {
+    dispatch(setFavorite(isSignIn));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSignIn]);
 
   useEffect(() => {
     if (searchError) {
@@ -211,7 +217,7 @@ export const RenderPage: FC<RenderPageProps> = ({
     <View style={[styles.container, isTheme && styles.containerActive]}>
       {error === '' ? (
         isLoading ? (
-          <LoaderContainer size={dw(150)} color={COLORS.STEEL_BLUE} />
+          <LoaderContainer />
         ) : (
           <HomePageList
             state={state && state}

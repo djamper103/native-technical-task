@@ -23,6 +23,8 @@ interface InputProps {
   containerStyle?: ViewStyle;
   containerLeftIcon?: ViewStyle;
   containerRightIcon?: ViewStyle;
+  leftIconStyle?: any;
+  rightIconStyle?: any;
   onChangeText?: (value: string) => any;
   onPressLeftIcon?: () => void;
   onPressRightIcon?: () => void;
@@ -40,6 +42,8 @@ export const Input: FC<InputProps> = ({
   containerStyle,
   containerLeftIcon,
   containerRightIcon,
+  leftIconStyle,
+  rightIconStyle,
   onChangeText,
   onPressLeftIcon,
   onPressRightIcon,
@@ -55,7 +59,10 @@ export const Input: FC<InputProps> = ({
         <TouchableOpacity
           style={containerLeftIcon && containerLeftIcon}
           onPress={onPressLeftIcon}>
-          <Image source={leftIcon} style={styles.image} />
+          <Image
+            source={leftIcon}
+            style={[styles.image, leftIconStyle && leftIconStyle]}
+          />
         </TouchableOpacity>
       )}
       <TextInput
@@ -70,7 +77,10 @@ export const Input: FC<InputProps> = ({
         <TouchableOpacity
           style={containerRightIcon && containerRightIcon}
           onPress={onPressRightIcon}>
-          <Image source={rightIcon} />
+          <Image
+            source={rightIcon}
+            style={[styles.image, leftIconStyle && rightIconStyle]}
+          />
         </TouchableOpacity>
       )}
     </View>
@@ -86,6 +96,9 @@ const styles = StyleSheet.create({
     margin: dw(20),
     paddingHorizontal: dw(10),
     backgroundColor: COLORS.WHITE,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   containerActive: {
     borderColor: COLORS.WHITE,
@@ -93,12 +106,11 @@ const styles = StyleSheet.create({
   input: {
     height: dw(50),
     color: COLORS.BLACK,
-    fontSize: 16,
+    fontSize: 18,
   },
   image: {
     resizeMode: 'contain',
     backgroundColor: COLORS.TRANSPARENT,
-    tintColor: COLORS.STEEL_BLUE,
-    marginHorizontal: dw(10),
+    tintColor: COLORS.DUNE,
   },
 });

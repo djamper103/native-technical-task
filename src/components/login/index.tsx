@@ -1,5 +1,5 @@
-import React, {FC, useEffect} from 'react';
-import {Text, View, StyleSheet, Pressable, Alert} from 'react-native';
+import React, {FC, useEffect, useState} from 'react';
+import {Text, View, StyleSheet, Alert} from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
 import {Input} from 'components/input';
 import {COLORS} from 'constants/colors';
@@ -9,9 +9,16 @@ import {useAppDispatch, useAppSelector} from 'hooks/redux';
 import {patternEmail, patternPassword} from 'components/common/login';
 import {SignInType} from 'types/login';
 import {
-  deleteLoginError,
+  resetPassword,
   signIn,
 } from 'redux/store/actionCreator/actionCreatorLogin';
+import {ModalContainer} from 'components/common/modal';
+import {setValue} from 'components/common/functions/setValue';
+import {ButtonContainer} from 'components/common/button';
+import {ScrollView} from 'react-native-gesture-handler';
+import {LoaderContainer} from 'components/common/loader';
+import {ResetPassword} from './components/resetPassword';
+import {RESET_PASSWORD_ICON} from 'constants/images';
 
 export const storage = new MMKV();
 
@@ -20,6 +27,10 @@ interface LoginProps {
 }
 
 export const Login: FC<LoginProps> = ({navigation}) => {
+  const [isModal, setIsModal] = useState(false);
+  const [error, setError] = useState<any>('');
+  const [isResetPassword, setIsResetPassword] = useState(false);
+
   const {isSignIn} = useAppSelector(reducer => reducer.loginReducer);
   const {errorSignIn} = useAppSelector(reducer => reducer.loginReducer);
 
@@ -36,24 +47,37 @@ export const Login: FC<LoginProps> = ({navigation}) => {
 
   const dispatch = useAppDispatch();
 
+  const setModal = () => {
+    setValue(false, setIsModal);
+  };
+
   const onSubmit = async (data: SignInType) => {
-    dispatch(deleteLoginError());
-    try {
-      dispatch(
-        signIn({
+    setValue(true, setIsModal);
+    dispatch(
+      signIn({
+        item: {
           email: data.email,
           password: data.password,
-        }),
-      );
-      if (errorSignIn !== '' && !isSignIn) {
-        Alert.alert(`${errorSignIn}`);
-      }
-    } catch (er: any) {
-      Alert.alert(`Something went wrong ${er}`);
-    }
+        },
+        isLogin: isSignIn,
+      }),
+    );
   };
 
   useEffect(() => {
+    setError(errorSignIn);
+  }, [errorSignIn]);
+
+  useEffect(() => {
+    if (error !== '' && !isSignIn) {
+      setValue(false, setIsModal);
+      Alert.alert(`${error}`);
+    }
+  }, [error, isSignIn]);
+
+  useEffect(() => {
+    setError('');
+    setValue(false, setIsModal);
     if (isSignIn) {
       navigation.navigate('Home');
     }
@@ -64,8 +88,21 @@ export const Login: FC<LoginProps> = ({navigation}) => {
     navigation.navigate('Registration');
   };
 
+  const isReset = () => {
+    setIsResetPassword(!isResetPassword);
+  };
+
+  const resetpassword = (email: string) => {
+    dispatch(resetPassword({email: email, func: isReset}));
+  };
+
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
+      {isModal && (
+        <ModalContainer onPress={setModal} isModal={isModal}>
+          <LoaderContainer />
+        </ModalContainer>
+      )}
       <Controller
         control={control}
         rules={{
@@ -73,7 +110,7 @@ export const Login: FC<LoginProps> = ({navigation}) => {
           pattern: patternEmail,
         }}
         render={({field: {onChange, value}}) => (
-          <Input onChangeText={onChange} text={value} placeholder={'Email'} />
+          <Input text={value} placeholder={'Email'} onChangeText={onChange} />
         )}
         name="email"
       />
@@ -89,10 +126,12 @@ export const Login: FC<LoginProps> = ({navigation}) => {
         }}
         render={({field: {onChange, value}}) => (
           <Input
-            onChangeText={onChange}
             text={value}
             placeholder={'Password'}
             secureTextEntry={true}
+            rightIcon={RESET_PASSWORD_ICON}
+            onPressRightIcon={isReset}
+            onChangeText={onChange}
           />
         )}
         name="password"
@@ -104,15 +143,28 @@ export const Login: FC<LoginProps> = ({navigation}) => {
         </Text>
       )}
 
-      <View style={styles.containerButton}>
-        <Pressable onPress={handleSubmit(onSubmit)} style={styles.button}>
-          <Text style={styles.buttonText}>Submit</Text>
-        </Pressable>
-        <Pressable onPress={registration} style={styles.button}>
-          <Text style={styles.buttonText}>Registration</Text>
-        </Pressable>
-      </View>
-    </View>
+      {isResetPassword ? (
+        <ResetPassword
+          containerButton={styles.containerButtonReset}
+          textStyleButton={styles.textStyleButton}
+          textError={styles.text}
+          onPressButton={resetpassword}
+        />
+      ) : (
+        <View style={styles.containerButton}>
+          <ButtonContainer
+            text={'Submit'}
+            containerStyle={styles.containerButton}
+            onPress={handleSubmit(onSubmit)}
+          />
+        </View>
+      )}
+      <ButtonContainer
+        text={'Registration'}
+        containerStyle={styles.containerButton}
+        onPress={registration}
+      />
+    </ScrollView>
   );
 };
 
@@ -123,6 +175,10 @@ const styles = StyleSheet.create({
   containerButton: {
     alignItems: 'center',
     marginTop: dw(10),
+  },
+  containerButtonReset: {
+    alignItems: 'center',
+    marginTop: dw(20),
   },
   text: {
     color: COLORS.RED,
@@ -141,5 +197,8 @@ const styles = StyleSheet.create({
     color: COLORS.WHITE,
     fontSize: 24,
     textAlign: 'center',
+  },
+  textStyleButton: {
+    fontSize: 22,
   },
 });

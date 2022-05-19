@@ -21,8 +21,9 @@ export const RegistrationSlice = createSlice({
         state.registrationError = action.payload;
       }
     },
-    deleteError(state) {
+    resetRegistration(state) {
       state.registrationError = '';
+      state.isRegistration = false;
     },
   },
 });

@@ -39,8 +39,8 @@ export const FavoritePage: FC<FavoritePageProps> = ({navigation}) => {
 
   const setNetInfo = useCallback(() => {
     dispatch(setIsNet());
-    dispatch(setFavorite());
-  }, [dispatch]);
+    dispatch(setFavorite(isSignIn));
+  }, [dispatch, isSignIn]);
 
   useEffect(() => {
     setNetInfo();
