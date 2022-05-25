@@ -32,7 +32,7 @@ export const CastPhoto: FC<CastPhotoProps> = ({data, isTheme}) => {
           style={[
             styles.text,
             styles.textCharacter,
-            data.character.length > 25 && styles.textLong,
+            data.character.length > 15 && styles.textLong,
           ]}>
           {data.character}
         </Text>
@@ -43,11 +43,10 @@ export const CastPhoto: FC<CastPhotoProps> = ({data, isTheme}) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: dw(285),
     width: dw(150),
+    marginLeft: dw(10),
   },
   image: {
-    resizeMode: 'contain',
     width: dw(150),
     height: dw(200),
     borderRadius: dw(10),
@@ -58,10 +57,10 @@ const styles = StyleSheet.create({
   text: {
     textAlign: 'center',
     color: COLORS.BLACK,
-    fontSize: 16,
+    fontSize: 18,
   },
   textLong: {
-    fontSize: 13,
+    fontSize: 15,
   },
   textCharacter: {
     color: COLORS.ALUMINIUM,

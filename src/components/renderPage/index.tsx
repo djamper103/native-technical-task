@@ -4,7 +4,7 @@ import {useAppDispatch, useAppSelector} from '../../hooks/redux';
 import {MovieData} from '../../types/movieData';
 import {View, StyleSheet} from 'react-native';
 import {COLORS} from '../../constants/colors';
-import {checkFavoriteItem} from '../common/functions/favorite';
+import {checkFavoriteItem} from '../functions/favorite';
 import {ErrorContainer} from '../common/errorContainer';
 import {
   decrementPage,
@@ -96,82 +96,47 @@ export const RenderPage: FC<RenderPageProps> = ({
     }
   }, [state?.length, uploadData]);
 
-  const nextPage = () => {
+  const setPage = (
+    func: any,
+    initialPage: any,
+    funcItem?: any,
+    initialType?: any,
+  ) => {
     if (searchText === '') {
-      dispatch(incrementPage(renderAllPage));
+      funcItem ? dispatch(func(initialPage)) : dispatch(func());
       dispatch(
         currentFetch({
           type: type,
-          curentPage: currentPage + 1,
+          curentPage: initialPage,
           currentGenre: genreType,
         }),
       ).then((el: any) => {
         setState(el.payload.results);
       });
     } else {
-      dispatch(incrementPage(renderAllPage));
+      initialType ? dispatch(func(initialPage)) : dispatch(func());
       dispatch(
         fetchSearch({
           type: type,
           text: searchText,
-          curentPage: currentPage + 1,
+          curentPage: initialPage,
         }),
       ).then((el: any) => {
         setState(el.payload.results);
       });
     }
+  };
+
+  const nextPage = () => {
+    setPage(incrementPage, currentPage + 1, renderAllPage);
   };
 
   const prevPage = () => {
-    if (searchText === '') {
-      dispatch(decrementPage());
-      dispatch(
-        currentFetch({
-          type: type,
-          curentPage: currentPage >= 2 ? currentPage - 1 : currentPage,
-          currentGenre: genreType,
-        }),
-      ).then((el: any) => {
-        setState(el.payload.results);
-      });
-    } else {
-      dispatch(decrementPage());
-      dispatch(
-        fetchSearch({
-          type: type,
-          text: searchText,
-          curentPage: currentPage >= 2 ? currentPage - 1 : currentPage,
-        }),
-      ).then((el: any) => {
-        setState(el.payload.results);
-      });
-    }
+    setPage(decrementPage, currentPage >= 2 ? currentPage - 1 : currentPage);
   };
 
   const installationCurrentPage = (item: any) => {
-    if (searchText === '') {
-      dispatch(setCurrentPage(item));
-      dispatch(
-        currentFetch({
-          type: type,
-          curentPage: item,
-          currentGenre: genreType,
-        }),
-      ).then((el: any) => {
-        setState(el.payload.results);
-      });
-    } else {
-      dispatch(setCurrentPage(item));
-      dispatch(
-        fetchSearch({
-          type: type,
-          text: searchText,
-          curentPage: item,
-        }),
-      ).then((el: any) => {
-        setState(el.payload.results);
-      });
-    }
+    setPage(setCurrentPage, item, true, true);
   };
 
   const onSearch = (text: string) => {

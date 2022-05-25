@@ -38,7 +38,7 @@ export const ListEllement: FC<ListEllementProps> = ({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: COLORS.CLOUD_BURST,
-    width: dw(180),
+    width: dw(170),
     height: dh(80),
     borderRadius: dw(15),
     justifyContent: 'center',

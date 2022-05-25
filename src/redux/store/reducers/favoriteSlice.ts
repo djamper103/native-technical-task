@@ -1,8 +1,6 @@
 import {createSlice} from '@reduxjs/toolkit';
-import {storageLocal} from 'constants/common';
 import {MovieData} from '../../../types/movieData';
-import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
+import {setfavorite} from 'components/functions/setFavorite';
 
 interface FavoriteState {
   favoriteState: MovieData[];
@@ -21,23 +19,13 @@ export const FavoriteSlice = createSlice({
     },
     incrementFavorite(state, action) {
       state.favoriteState = [action.payload, ...state.favoriteState];
-      storageLocal.set('favorite', JSON.stringify(state.favoriteState));
-      if (auth().currentUser?.uid !== undefined) {
-        firestore().collection('Favorite').doc(auth().currentUser?.uid).set({
-          favorite: state.favoriteState,
-        });
-      }
+      setfavorite(state);
     },
     decrementFavorite(state, action) {
       state.favoriteState = state.favoriteState.filter(
         el => el.id !== action.payload.id,
       );
-      storageLocal.set('favorite', JSON.stringify(state.favoriteState));
-      if (auth().currentUser?.uid !== undefined) {
-        firestore().collection('Favorite').doc(auth().currentUser?.uid).set({
-          favorite: state.favoriteState,
-        });
-      }
+      setfavorite(state);
     },
   },
 });

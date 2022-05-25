@@ -1,5 +1,5 @@
 import React, {FC, useEffect, useState} from 'react';
-import {Text, View, StyleSheet, Alert} from 'react-native';
+import {Text, View, StyleSheet} from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
 import {Input} from 'components/input';
 import {COLORS} from 'constants/colors';
@@ -13,12 +13,13 @@ import {
   signIn,
 } from 'redux/store/actionCreator/actionCreatorLogin';
 import {ModalContainer} from 'components/common/modal';
-import {setValue} from 'components/common/functions/setValue';
+import {setValue} from 'components/functions/setValue';
 import {ButtonContainer} from 'components/common/button';
 import {ScrollView} from 'react-native-gesture-handler';
 import {LoaderContainer} from 'components/common/loader';
 import {ResetPassword} from './components/resetPassword';
 import {RESET_PASSWORD_ICON} from 'constants/images';
+import {showAlert} from 'components/functions/alert';
 
 export const storage = new MMKV();
 
@@ -71,7 +72,7 @@ export const Login: FC<LoginProps> = ({navigation}) => {
   useEffect(() => {
     if (error !== '' && !isSignIn) {
       setValue(false, setIsModal);
-      Alert.alert(`${error}`);
+      showAlert(`${error}`);
     }
   }, [error, isSignIn]);
 
@@ -175,27 +176,16 @@ const styles = StyleSheet.create({
   containerButton: {
     alignItems: 'center',
     marginTop: dw(10),
+    marginBottom: dw(5),
   },
   containerButtonReset: {
     alignItems: 'center',
     marginTop: dw(20),
+    marginBottom: dw(5),
   },
   text: {
     color: COLORS.RED,
     fontSize: 16,
-    textAlign: 'center',
-  },
-  button: {
-    backgroundColor: COLORS.STEEL_BLUE,
-    width: dw(180),
-    paddingVertical: dw(10),
-    borderRadius: dw(15),
-    justifyContent: 'center',
-    marginBottom: dw(15),
-  },
-  buttonText: {
-    color: COLORS.WHITE,
-    fontSize: 24,
     textAlign: 'center',
   },
   textStyleButton: {

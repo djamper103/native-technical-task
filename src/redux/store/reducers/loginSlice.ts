@@ -28,9 +28,9 @@ export const LoginSlice = createSlice({
   reducers: {
     signIn(state, action) {
       if (action.payload.error === '') {
-        state.imageUrl = action.payload.imageUrl;
         state.userName = action.payload.name;
         state.email = action.payload.email;
+        state.imageUrl = action.payload.imageUrl;
         state.date = action.payload.date;
         state.isSignIn = true;
       } else {
@@ -43,17 +43,6 @@ export const LoginSlice = createSlice({
       state.email = '';
       state.date = '';
       state.isSignIn = false;
-    },
-    isSignIn(state, action) {
-      if (action.payload.error === '') {
-        state.userName = action.payload.name;
-        state.imageUrl = action.payload.imageUrl;
-        state.email = action.payload.email;
-        state.date = action.payload.date;
-        state.isSignIn = true;
-      } else {
-        state.errorSignIn = action.payload.error;
-      }
     },
     deleteError(state) {
       state.errorSignIn = '';

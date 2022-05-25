@@ -1,5 +1,5 @@
 import React, {FC, useEffect, useState} from 'react';
-import {Text, View, StyleSheet, Alert} from 'react-native';
+import {Text, View, StyleSheet} from 'react-native';
 import {useForm, Controller} from 'react-hook-form';
 import {Input} from 'components/input';
 import {COLORS} from 'constants/colors';
@@ -11,11 +11,12 @@ import {
   resetRegistration,
 } from 'redux/store/actionCreator/actionCreatorLogin';
 import {useAppDispatch, useAppSelector} from 'hooks/redux';
-import {uploadPhoto} from 'components/common/functions/uploadPhoto';
+import {uploadPhoto} from 'components/functions/uploadPhoto';
 import {ModalContainer} from 'components/common/modal';
-import {setValue} from 'components/common/functions/setValue';
+import {setValue} from 'components/functions/setValue';
 import {ButtonContainer} from 'components/common/button';
 import {LoaderContainer} from 'components/common/loader';
+import {showAlert} from 'components/functions/alert';
 
 interface Registrationrops {
   navigation?: any;
@@ -72,7 +73,7 @@ export const Registration: FC<Registrationrops> = ({navigation}) => {
   useEffect(() => {
     if (error !== '' && !isRegistration) {
       setValue(false, setIsModal);
-      Alert.alert(`${error}`);
+      showAlert(`${error}`);
     }
   }, [error, isRegistration]);
 
@@ -194,7 +195,7 @@ const styles = StyleSheet.create({
   },
   containerButtonImage: {
     marginTop: dw(10),
-    marginRight: dw(10),
+    marginRight: dw(5),
   },
   containerUpload: {
     flexDirection: 'row',
@@ -207,20 +208,6 @@ const styles = StyleSheet.create({
   text: {
     color: COLORS.RED,
     fontSize: 16,
-    textAlign: 'center',
-  },
-  button: {
-    backgroundColor: COLORS.STEEL_BLUE,
-    paddingHorizontal: dw(10),
-    paddingVertical: dw(10),
-    borderRadius: dw(15),
-  },
-  buttonSubmit: {
-    width: dw(170),
-  },
-  buttonText: {
-    color: COLORS.WHITE,
-    fontSize: 22,
     textAlign: 'center',
   },
 });

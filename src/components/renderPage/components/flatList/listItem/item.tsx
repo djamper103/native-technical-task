@@ -1,14 +1,14 @@
 import React, {FC, useEffect, useState} from 'react';
-import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
+import {Pressable, StyleSheet, Text, View} from 'react-native';
 import {MovieData} from '../../../../../types/movieData';
 import {dw} from '../../../../../utils/dimensions';
-import {imagePath} from '../../../../../constants/common';
 import {COLORS} from '../../../../../constants/colors';
-import {VoteContainer} from '../../../../common/vote';
-import {FavoriteIcon} from '../../../../common/favorite';
+import {ImageVoteFavorite} from '../../../../common/ImageVoteFavorite';
+import {MainText} from '../mainText';
+import {imagePath} from 'constants/common';
 
 interface ListItemProps {
-  data: MovieData;
+  data: any;
   navigation?: any;
   type?: string;
   checkFavorite: (value: MovieData) => void;
@@ -53,46 +53,27 @@ export const ListItem: FC<ListItemProps> = ({
   return (
     <Pressable onPress={onPress} style={styles.container}>
       {data && (
-        <View style={styles.containerMain}>
-          <View>
-            <Image
-              style={styles.image}
-              source={{
-                uri: data
-                  ? `${imagePath}${data.poster_path}`
-                  : 'https://reactnative.dev/img/tiny_logo.png',
-              }}
-            />
-            <VoteContainer
-              vote={data.vote_average}
-              containerStyle={styles.containerRating}
-            />
-            <FavoriteIcon
-              containerStyle={styles.containerFavorite}
-              isFavorite={isFavorite}
-              onPress={pressFavorite}
-            />
+        <>
+          <ImageVoteFavorite
+            data={data}
+            isFavorite={isFavorite}
+            icon={
+              data.poster_path
+                ? {
+                    uri: `${imagePath}${data.poster_path}`,
+                  }
+                : {uri: 'https://reactnative.dev/img/tiny_logo.png'}
+            }
+            onPress={pressFavorite}
+          />
+          <MainText data={data} mediaType={mediaType} title={title} />
+          <View style={styles.containerDate}>
+            <Text style={styles.textDate}>{mediaType}</Text>
+            <Text style={styles.textDate}>
+              {mediaType === 'Movie' ? data.release_date : data.first_air_date}
+            </Text>
           </View>
-          <View style={styles.containerMainText}>
-            <View
-              style={[
-                styles.containerTitle,
-                title.length > 40 && styles.containerTitleLong,
-              ]}>
-              <Text style={[styles.text, title.length > 40 && styles.textLong]}>
-                {title}
-              </Text>
-            </View>
-            <View style={styles.containerDate}>
-              <Text style={styles.textDate}>{mediaType}</Text>
-              <Text style={styles.textDate}>
-                {mediaType === 'Movie'
-                  ? data.release_date
-                  : data.first_air_date}
-              </Text>
-            </View>
-          </View>
-        </View>
+        </>
       )}
     </Pressable>
   );
@@ -100,51 +81,19 @@ export const ListItem: FC<ListItemProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    width: dw(190),
+    width: dw(180),
     margin: dw(5),
-  },
-  containerMain: {
     backgroundColor: COLORS.CLOUD_BURST,
     borderRadius: dw(14),
-  },
-  containerRating: {
-    bottom: dw(296),
-    left: dw(145),
-  },
-  containerFavorite: {
-    bottom: dw(290),
-    left: dw(71),
-  },
-  containerMainText: {
-    marginHorizontal: dw(10),
-  },
-  containerTitle: {
-    height: dw(75),
-    bottom: dw(35),
-  },
-  containerTitleLong: {
-    bottom: dw(40),
   },
   containerDate: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    bottom: dw(15),
-  },
-  image: {
-    width: dw(190),
-    height: dw(300),
-    borderRadius: dw(14),
-  },
-  text: {
-    color: COLORS.WHITE,
-    fontSize: 18,
-    textAlign: 'center',
+    marginBottom: dw(10),
+    marginHorizontal: dw(10),
   },
   textDate: {
     color: COLORS.ATHENS_GRAY,
     fontSize: 14,
-  },
-  textLong: {
-    fontSize: 15,
   },
 });

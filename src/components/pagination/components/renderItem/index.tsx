@@ -32,8 +32,8 @@ const styles = StyleSheet.create({
   containerPage: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: dw(50),
-    height: dh(50),
+    width: dw(40),
+    height: dh(40),
   },
   containerPageActive: {
     backgroundColor: COLORS.STEEL_BLUE,

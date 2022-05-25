@@ -1,6 +1,9 @@
-import React, {FC} from 'react';
-import {fetchMovies} from 'redux/store/actionCreator/actionCreator';
-import {useAppSelector} from '../../../hooks/redux';
+import React, {FC, useEffect} from 'react';
+import {
+  fetchMovies,
+  setCurrentPage,
+} from 'redux/store/actionCreator/actionCreator';
+import {useAppDispatch, useAppSelector} from '../../../hooks/redux';
 import {RenderPage} from '../../renderPage';
 
 export const CategoriesRenderPage: FC = (props: any) => {
@@ -8,6 +11,13 @@ export const CategoriesRenderPage: FC = (props: any) => {
   const {allPages} = useAppSelector(reducer => reducer.moviesReducer);
   const {error} = useAppSelector(reducer => reducer.moviesReducer);
   const {isLoading} = useAppSelector(reducer => reducer.moviesReducer);
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(setCurrentPage(1));
+  }, [dispatch]);
+
   return (
     <RenderPage
       navigation={props.navigation}

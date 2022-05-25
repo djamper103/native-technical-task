@@ -1,18 +1,17 @@
+import {ImageVoteFavorite} from 'components/common/ImageVoteFavorite';
 import React, {FC, useEffect, useState} from 'react';
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import {COLORS} from '../../../constants/colors';
 import {imagePath} from '../../../constants/common';
 import {NO_PICTURE_LONG_ICON} from '../../../constants/images';
 import {MovieData} from '../../../types/movieData';
 import {dw} from '../../../utils/dimensions';
-import {FavoriteIcon} from '../../common/favorite';
-import {VoteContainer} from '../../common/vote';
 
 interface CurrentMovieHeaderProps {
   state: MovieData;
   type: string;
   isTheme?: boolean;
-  isFavorite?: boolean;
+  isFavorite: boolean;
   pressFavorite: () => void;
 }
 
@@ -37,30 +36,24 @@ export const CurrentMovieHeader: FC<CurrentMovieHeaderProps> = ({
 
   return (
     <View style={styles.container}>
-      <View>
-        <Image
-          style={styles.image}
-          source={
-            state.backdrop_path
-              ? {
-                  uri: `${imagePath}${state.backdrop_path}`,
-                }
-              : NO_PICTURE_LONG_ICON
-          }
-        />
-        <VoteContainer
-          vote={state.vote_average}
-          containerStyle={styles.containerVote}
-        />
-        <FavoriteIcon
-          containerStyle={styles.containerFavorite}
-          isFavorite={isFavorite}
-          onPress={onPressFavorite}
-        />
-      </View>
+      <ImageVoteFavorite
+        data={state}
+        isFavorite={isFavorite}
+        icon={
+          state.backdrop_path
+            ? {
+                uri: `${imagePath}${state.backdrop_path}`,
+              }
+            : NO_PICTURE_LONG_ICON
+        }
+        imageStyle={styles.image}
+        containerStyleFavorite={styles.containerFavorite}
+        containerStyleRating={styles.containerVote}
+        containerStyle={styles.containerStyle}
+        onPress={onPressFavorite}
+      />
       <View style={styles.containerHeaderText}>
-        <Text
-          style={[styles.text, isTheme && styles.textActive, styles.textTitle]}>
+        <Text style={[styles.text, isTheme && styles.textActive]}>
           {type === 'movie' ? state.title : state.name} ({date}){' '}
         </Text>
       </View>
@@ -73,31 +66,30 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   containerHeaderText: {
-    alignItems: 'center',
-    bottom: dw(15),
+    marginVertical: dw(20),
+    paddingHorizontal: dw(10),
   },
   containerVote: {
-    bottom: dw(223),
+    bottom: dw(210),
     left: dw(10),
   },
   containerFavorite: {
-    bottom: dw(260),
-    left: dw(180),
+    bottom: dw(248),
+    left: dw(170),
+  },
+  containerStyle: {
+    height: dw(214),
   },
   image: {
     resizeMode: 'contain',
     width: '100%',
-    height: dw(230),
-    bottom: dw(4),
+    height: dw(214),
+    borderRadius: 0,
   },
   text: {
     color: COLORS.BLACK,
-    fontSize: 16,
-    textAlign: 'center',
-    bottom: dw(20),
-  },
-  textTitle: {
     fontSize: 24,
+    textAlign: 'center',
   },
   textActive: {
     color: COLORS.WHITE,

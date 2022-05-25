@@ -22,8 +22,19 @@ export const ButtonContainer: FC<ButtonContainerProps> = ({
     <View style={containerStyle && containerStyle}>
       <Pressable
         onPress={onPress}
-        style={[styles.button, buttonStyle && buttonStyle]}>
-        <Text style={[styles.text, textStyle && textStyle]}>{text}</Text>
+        style={[
+          styles.button,
+          buttonStyle && buttonStyle,
+          text.length > 10 && styles.buttonLong,
+        ]}>
+        <Text
+          style={[
+            styles.text,
+            textStyle && textStyle,
+            text.length > 10 && styles.textLong,
+          ]}>
+          {text}
+        </Text>
       </Pressable>
     </View>
   );
@@ -32,15 +43,20 @@ export const ButtonContainer: FC<ButtonContainerProps> = ({
 const styles = StyleSheet.create({
   button: {
     backgroundColor: COLORS.STEEL_BLUE,
-    width: dw(180),
-    paddingVertical: dw(10),
+    width: dw(185),
+    paddingVertical: dw(8),
     borderRadius: dw(15),
     justifyContent: 'center',
-    marginBottom: dw(15),
+  },
+  buttonLong: {
+    paddingVertical: dw(10),
   },
   text: {
     color: COLORS.WHITE,
     fontSize: 24,
     textAlign: 'center',
+  },
+  textLong: {
+    fontSize: 20,
   },
 });

@@ -48,7 +48,7 @@ export const HomePageList: FC<HomePageListProps> = ({
       <ListItem
         data={item}
         navigation={navigation}
-        type={type}
+        type={type ? type : item.media_type}
         checkFavorite={checkFavorite}
         onPressFavorite={onPressFavorite}
       />
@@ -71,10 +71,20 @@ export const HomePageList: FC<HomePageListProps> = ({
           renderItem={renderItem}
           showsVerticalScrollIndicator={false}
           numColumns={2}
+          onRefresh={uploadData}
+          refreshing={false}
           ListHeaderComponent={
             pageType === 'favorite' ? null : allPageCurrent ? (
               <Search onSearch={onSearch} />
-            ) : null
+            ) : (
+              <ErrorContainer
+                text={
+                  'No internet connection please pull the page down to update'
+                }
+                isTheme={isTheme}
+                containerStyle={styles.containerStyle}
+              />
+            )
           }
           ListFooterComponent={
             pageType === 'favorite' ? null : allPageCurrent ? (
@@ -85,14 +95,7 @@ export const HomePageList: FC<HomePageListProps> = ({
                 onRightPress={nextPage}
                 onPressItem={installationCurrentPage}
               />
-            ) : (
-              <ErrorContainer
-                onPress={uploadData}
-                text={'No internet connection'}
-                isTheme={isTheme}
-                containerStyle={styles.containerStyle}
-              />
-            )
+            ) : null
           }
         />
       )}
@@ -103,10 +106,10 @@ export const HomePageList: FC<HomePageListProps> = ({
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    marginTop: dh(10),
+    marginVertical: dh(15),
   },
   containerStyle: {
-    marginVertical: dw(15),
+    marginVertical: dw(20),
   },
   text: {
     fontSize: 24,

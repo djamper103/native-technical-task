@@ -62,7 +62,7 @@ export const ChangeNameContainer: FC<ChangeNameContainerProps> = ({
 const styles = StyleSheet.create({
   containerStyle: {
     alignItems: 'center',
-    marginVertical: dw(20),
+    marginBottom: dw(15),
   },
   text: {
     color: COLORS.RED,

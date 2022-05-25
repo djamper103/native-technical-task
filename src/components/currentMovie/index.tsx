@@ -1,3 +1,4 @@
+import {ErrorContainer} from 'components/common/errorContainer';
 import React, {FC, useEffect, useState} from 'react';
 import {FlatList, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {
@@ -10,11 +11,10 @@ import {
 } from 'redux/store/actionCreator/actionCreatorFavorite';
 import {COLORS} from '../../constants/colors';
 import {useAppDispatch, useAppSelector} from '../../hooks/redux';
-
 import {CastItemType, CastPhotoType} from '../../types/cast';
 import {MovieData} from '../../types/movieData';
 import {dh, dw} from '../../utils/dimensions';
-import {checkFavoriteItem} from '../common/functions/favorite';
+import {checkFavoriteItem} from '../functions/favorite';
 import {CastPhoto} from './components/castPhoto';
 import {CurrentMovieHeader} from './components/header';
 
@@ -85,15 +85,13 @@ export const CurrentMovie: FC = (props: any) => {
             isFavorite={isFavorite}
             pressFavorite={pressFavorite}
           />
-          <View>
-            <FlatList<CastPhotoType>
-              data={cast}
-              keyExtractor={item => item.profile_path + item.name}
-              renderItem={renderItem}
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-            />
-          </View>
+          <FlatList<CastPhotoType>
+            data={cast}
+            keyExtractor={item => item.profile_path + item.name}
+            renderItem={renderItem}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+          />
           <View style={styles.containerOverview}>
             <Text style={[styles.text, isTheme && styles.textActive]}>
               {' '}
@@ -102,11 +100,11 @@ export const CurrentMovie: FC = (props: any) => {
           </View>
         </View>
       ) : (
-        <View style={styles.containerText}>
-          <Text style={[styles.text, isTheme && styles.textActive]}>
-            Data is not available
-          </Text>
-        </View>
+        <ErrorContainer
+          text="Data is not available"
+          containerStyle={styles.containerText}
+          isTheme={isTheme}
+        />
       )}
     </ScrollView>
   );
@@ -121,17 +119,10 @@ const styles = StyleSheet.create({
   },
   containerText: {
     alignItems: 'center',
-    marginTop: dh(150),
+    marginTop: dh(300),
   },
   containerOverview: {
     margin: dw(10),
-    marginTop: dw(20),
-    // marginHorizontal: dw(10),
-    // marginBottom: dw(10),
-  },
-  image: {
-    width: 100,
-    height: 100,
   },
   text: {
     fontSize: 24,

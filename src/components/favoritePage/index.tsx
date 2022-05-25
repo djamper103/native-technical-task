@@ -4,7 +4,7 @@ import {COLORS} from '../../constants/colors';
 import {useAppDispatch, useAppSelector} from '../../hooks/redux';
 import {HomePageList} from '../renderPage/components/flatList';
 import _ from 'lodash';
-import {checkFavoriteItem} from '../common/functions/favorite';
+import {checkFavoriteItem} from '../functions/favorite';
 import {MovieData} from '../../types/movieData';
 import {dw} from '../../utils/dimensions';
 import {ErrorContainer} from '../common/errorContainer';
@@ -78,11 +78,11 @@ export const FavoritePage: FC<FavoritePageProps> = ({navigation}) => {
           </>
         ) : (
           <ErrorContainer
-            onPress={goToLogin}
-            isTheme={isTheme}
             text={'Log into your account to see your favorites'}
             buttonText={'Login'}
+            isTheme={isTheme}
             containerButtonStyle={styles.containerButtonStyle}
+            onPress={goToLogin}
           />
         )
       ) : favoriteState.length > 0 ? (

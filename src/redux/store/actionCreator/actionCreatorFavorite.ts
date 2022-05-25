@@ -3,8 +3,9 @@ import {FavoriteSlice} from '../reducers/favoriteSlice';
 import {AppDispatch} from '../store';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import {netInfo} from 'components/functions/internet';
+import {ifJson} from 'components/functions/ifJson';
 import {storageLocal} from 'constants/common';
-import {netInfo} from 'components/common/functions/internet';
 
 export const addFavorite = (item: MovieData) => (dispatch: AppDispatch) => {
   dispatch(FavoriteSlice.actions.incrementFavorite(item));
@@ -17,7 +18,7 @@ export const deleteFavorite = (item: MovieData) => (dispatch: AppDispatch) => {
 export const setFavorite =
   (isLogin: boolean) => async (dispatch: AppDispatch) => {
     if (await netInfo()) {
-      if (isLogin !== undefined) {
+      if (isLogin) {
         firestore()
           .collection('Favorite')
           .doc(auth().currentUser?.uid)
@@ -26,36 +27,42 @@ export const setFavorite =
             if (documentSnapshot.exists) {
               let result: any = documentSnapshot.data();
               if (result.favorite.length !== 0) {
-                dispatch(
-                  FavoriteSlice.actions.setFavoriteState(result.favorite),
-                );
-              } else {
                 const json = storageLocal.getString('favorite');
                 if (json !== undefined) {
-                  const userObject = JSON.parse(json);
-                  dispatch(FavoriteSlice.actions.setFavoriteState(userObject));
+                  let uniqueObjArray = [
+                    ...new Map(
+                      [...JSON.parse(json), ...result.favorite].map(
+                        (item: any) => [item.title, item],
+                      ),
+                    ).values(),
+                  ];
+                  dispatch(
+                    FavoriteSlice.actions.setFavoriteState(uniqueObjArray),
+                  );
+                } else {
+                  dispatch(
+                    FavoriteSlice.actions.setFavoriteState(result.favorite),
+                  );
                 }
+              } else {
+                ifJson(
+                  'favorite',
+                  FavoriteSlice.actions.setFavoriteState,
+                  dispatch,
+                );
               }
             } else {
-              const json = storageLocal.getString('favorite');
-              if (json !== undefined) {
-                const userObject = JSON.parse(json);
-                dispatch(FavoriteSlice.actions.setFavoriteState(userObject));
-              }
+              ifJson(
+                'favorite',
+                FavoriteSlice.actions.setFavoriteState,
+                dispatch,
+              );
             }
           });
       } else {
-        const json = storageLocal.getString('favorite');
-        if (json !== undefined) {
-          const userObject = JSON.parse(json);
-          dispatch(FavoriteSlice.actions.setFavoriteState(userObject));
-        }
+        dispatch(FavoriteSlice.actions.setFavoriteState([]));
       }
     } else {
-      const json = storageLocal.getString('favorite');
-      if (json !== undefined) {
-        const userObject = JSON.parse(json);
-        dispatch(FavoriteSlice.actions.setFavoriteState(userObject));
-      }
+      ifJson('favorite', FavoriteSlice.actions.setFavoriteState, dispatch);
     }
   };

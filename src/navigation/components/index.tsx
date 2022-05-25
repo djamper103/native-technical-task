@@ -12,12 +12,13 @@ const Drawer = createDrawerNavigator();
 
 export const DrawerScreen: FC = () => {
   const {isTheme} = useAppSelector(reducer => reducer.themeReducer);
+  const {isSignIn} = useAppSelector(reducer => reducer.loginReducer);
 
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(setFavorite());
-  }, [dispatch]);
+    dispatch(setFavorite(isSignIn));
+  }, [dispatch, isSignIn]);
 
   return (
     <Drawer.Navigator
