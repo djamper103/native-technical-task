@@ -1,9 +1,17 @@
 import {ErrorContainer} from 'components/common/errorContainer';
 import React, {FC, useEffect, useState} from 'react';
-import {FlatList, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {
+  FlatList,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import {
   fetchMoreDetails,
   fetchVideo,
+  setIsNet,
 } from 'redux/store/actionCreator/actionCreator';
 import {
   addFavorite,
@@ -17,6 +25,8 @@ import {dh, dw} from '../../utils/dimensions';
 import {checkFavoriteItem} from '../functions/favorite';
 import {CastPhoto} from './components/castPhoto';
 import {CurrentMovieHeader} from './components/header';
+import YoutubePlayer from 'react-native-youtube-iframe';
+import {showAlert} from 'components/functions/alert';
 
 export const CurrentMovie: FC = (props: any) => {
   const [state, setState] = useState<MovieData>();
@@ -24,16 +34,12 @@ export const CurrentMovie: FC = (props: any) => {
   const [type, setType] = useState<string>('');
   const [isFavorite, setIsFavorite] = useState<any>(false);
 
-  const {isTheme} = useAppSelector(reducer => reducer.themeReducer);
-
-  const {favoriteState} = useAppSelector(reducer => reducer.favoriteReducer);
-
   const dispatch = useAppDispatch();
 
-  // const {videoUrl} = useAppSelector(reducer => reducer.videoReducer);
-  // console.log('///', videoUrl[0].key);
-  // `https://www.youtube.com/watch?v=${videoUrl[0].key}`;
-  // };
+  const {isTheme} = useAppSelector(reducer => reducer.themeReducer);
+  const {favoriteState} = useAppSelector(reducer => reducer.favoriteReducer);
+  const {videoUrl} = useAppSelector(reducer => reducer.videoReducer);
+  const {isNet} = useAppSelector(reducer => reducer.internetReducer);
 
   useEffect(() => {
     setState(props.route.params.data);
@@ -60,6 +66,10 @@ export const CurrentMovie: FC = (props: any) => {
     }
   }, [favoriteState, state]);
 
+  useEffect(() => {
+    dispatch(setIsNet());
+  }, [dispatch]);
+
   const renderItem: any = (item: CastItemType) => {
     return <CastPhoto data={item.item} isTheme={isTheme} />;
   };
@@ -72,6 +82,9 @@ export const CurrentMovie: FC = (props: any) => {
     }
   };
 
+  const onError = () => {
+    showAlert('Video upload error');
+  };
   return (
     <ScrollView
       style={[styles.container, isTheme && styles.containerActive]}
@@ -83,18 +96,40 @@ export const CurrentMovie: FC = (props: any) => {
             type={type}
             isTheme={isTheme}
             isFavorite={isFavorite}
+            isNet={isNet}
             pressFavorite={pressFavorite}
           />
-          <FlatList<CastPhotoType>
-            data={cast}
-            keyExtractor={item => item.profile_path + item.name}
-            renderItem={renderItem}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-          />
+          {cast && (
+            <FlatList<CastPhotoType>
+              data={cast}
+              keyExtractor={item => item.profile_path + item.name}
+              renderItem={renderItem}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+            />
+          )}
+          {isNet && videoUrl !== '' && (
+            <View style={styles.containerYoutube}>
+              <YoutubePlayer
+                height={dw(214)}
+                videoId={videoUrl}
+                webViewStyle={styles.webViewStyle}
+                webViewProps={{
+                  androidLayerType:
+                    Platform.OS === 'android' && Platform.Version <= 22
+                      ? 'hardware'
+                      : 'none',
+                  renderToHardwareTextureAndroid: true,
+                }}
+                onError={onError}
+                forceAndroidAutoplay={false}
+                allowWebViewZoom={true}
+              />
+            </View>
+          )}
           <View style={styles.containerOverview}>
             <Text style={[styles.text, isTheme && styles.textActive]}>
-              {' '}
+              {'    '}
               {state.overview}
             </Text>
           </View>
@@ -113,6 +148,7 @@ export const CurrentMovie: FC = (props: any) => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: COLORS.WHITE,
+    marginBottom: dw(2),
   },
   containerActive: {
     backgroundColor: COLORS.OXFORD_BLUE,
@@ -122,7 +158,11 @@ const styles = StyleSheet.create({
     marginTop: dh(300),
   },
   containerOverview: {
-    margin: dw(10),
+    marginHorizontal: dw(2),
+  },
+  containerYoutube: {
+    marginTop: dw(10),
+    marginBottom: dw(5),
   },
   text: {
     fontSize: 24,
@@ -131,5 +171,8 @@ const styles = StyleSheet.create({
   },
   textActive: {
     color: COLORS.WHITE,
+  },
+  webViewStyle: {
+    opacity: 0.99,
   },
 });

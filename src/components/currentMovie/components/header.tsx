@@ -12,6 +12,7 @@ interface CurrentMovieHeaderProps {
   type: string;
   isTheme?: boolean;
   isFavorite: boolean;
+  isNet?: boolean;
   pressFavorite: () => void;
 }
 
@@ -20,6 +21,7 @@ export const CurrentMovieHeader: FC<CurrentMovieHeaderProps> = ({
   type,
   isTheme,
   isFavorite,
+  isNet,
   pressFavorite,
 }) => {
   const [date, setDate] = useState<string | undefined>('');
@@ -40,7 +42,7 @@ export const CurrentMovieHeader: FC<CurrentMovieHeaderProps> = ({
         data={state}
         isFavorite={isFavorite}
         icon={
-          state.backdrop_path
+          isNet && state.backdrop_path
             ? {
                 uri: `${imagePath}${state.backdrop_path}`,
               }

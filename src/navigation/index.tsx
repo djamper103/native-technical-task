@@ -1,17 +1,17 @@
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import React, {FC, useEffect} from 'react';
-import {StatusBar} from 'react-native';
+import {Platform, StatusBar} from 'react-native';
 import {COLORS} from '../constants/colors';
 import {useAppDispatch, useAppSelector} from '../hooks/redux';
 import {dw} from '../utils/dimensions';
 import {DrawerScreen} from './components/index';
-// import {Tabs} from './components/tabs';
 import {routesStack} from './routes';
 import auth from '@react-native-firebase/auth';
 import {setSignIn} from 'redux/store/actionCreator/actionCreatorLogin';
 import {setIsNet} from 'redux/store/actionCreator/actionCreator';
 import {setFavorite} from 'redux/store/actionCreator/actionCreatorFavorite';
+import {request, PERMISSIONS} from 'react-native-permissions';
 
 export const NavigationContainerFC: FC = () => {
   const Stack = createStackNavigator();
@@ -19,6 +19,20 @@ export const NavigationContainerFC: FC = () => {
   const {isSignIn} = useAppSelector(reducer => reducer.loginReducer);
 
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    request(
+      Platform.OS === 'ios'
+        ? PERMISSIONS.IOS.CAMERA
+        : PERMISSIONS.ANDROID.CAMERA,
+    ).then(() => {
+      request(
+        Platform.OS === 'ios'
+          ? PERMISSIONS.IOS.MEDIA_LIBRARY
+          : PERMISSIONS.ANDROID.ACCESS_MEDIA_LOCATION,
+      );
+    });
+  }, []);
 
   useEffect(() => {
     if (auth().currentUser !== null) {

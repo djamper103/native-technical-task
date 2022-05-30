@@ -23,7 +23,9 @@ export const VoteContainer: FC<VoteContainerProps> = ({
         // eslint-disable-next-line eqeqeq
         vote == '0' && styles.containerNull,
       ]}>
-      <Text style={[styles.text, textStyle && textStyle]}>{vote}</Text>
+      <Text style={[styles.text, textStyle && textStyle]}>
+        {vote.toString().slice(0, 3)}
+      </Text>
     </View>
   );
 };
